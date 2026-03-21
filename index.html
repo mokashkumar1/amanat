@@ -1,0 +1,1679 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Amanat — Every Rupee Accountable</title>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,600;12..96,700;12..96,800&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet"/>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<style>
+/* ── PASTE YOUR KEYS BELOW ── */
+/* See AmanatSetupGuide.html for instructions */
+
+:root{
+  --fd:'Bricolage Grotesque',sans-serif;
+  --fb:'Plus Jakarta Sans',sans-serif;
+  --bg:#080C14;--bg2:#0C1118;
+  --sf:#141B28;--sf2:#1A2234;--sf3:#222E46;
+  --b1:rgba(255,255,255,0.06);--b2:rgba(255,255,255,0.11);--b3:rgba(255,255,255,0.22);
+  --ac:#00DFA8;--red:#FF4560;--amb:#F5A623;--blu:#5B8DEF;
+  --t1:#fff;--t2:rgba(255,255,255,0.60);--t3:rgba(255,255,255,0.32);
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+html{scroll-behavior:smooth;}
+body{font-family:var(--fb);background:var(--bg);color:var(--t1);-webkit-font-smoothing:antialiased;min-height:100vh;}
+@keyframes fadeUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+@keyframes fadeIn{from{opacity:0}to{opacity:1}}
+@keyframes ping{0%{transform:scale(1);opacity:.5}100%{transform:scale(2);opacity:0}}
+@keyframes glow{0%,100%{opacity:.3}50%{opacity:.6}}
+@keyframes ticker{0%{transform:translateX(0)}100%{transform:translateX(-50%)}}
+@keyframes spin{to{transform:rotate(360deg)}}
+.au{animation:fadeUp .5s ease both}
+.au1{animation:fadeUp .5s .08s ease both}
+.au2{animation:fadeUp .5s .16s ease both}
+.au3{animation:fadeUp .5s .24s ease both}
+
+/* ── LOADING OVERLAY ── */
+#globalLoader{position:fixed;inset:0;background:var(--bg);z-index:9999;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:16px;}
+#globalLoader.hidden{display:none;}
+.loader-spin{width:36px;height:36px;border:3px solid var(--b2);border-top-color:var(--ac);border-radius:50%;animation:spin .7s linear infinite;}
+.loader-txt{font-family:var(--fb);font-size:13px;color:var(--t3);}
+
+/* ── SHARED NAV ── */
+.nav{position:fixed;top:0;left:0;right:0;z-index:100;height:62px;padding:0 48px;display:flex;align-items:center;justify-content:space-between;background:rgba(8,12,20,.88);backdrop-filter:blur(20px);border-bottom:1px solid var(--b1);}
+.nav-logo{display:flex;align-items:center;gap:9px;cursor:pointer;}
+.logo-mk{width:30px;height:30px;border-radius:7px;background:var(--ac);display:flex;align-items:center;justify-content:center;}
+.logo-nm{font-family:var(--fd);font-size:16px;font-weight:800;letter-spacing:-0.4px;color:var(--t1);}
+.nav-r{display:flex;gap:10px;align-items:center;}
+.btn-o{padding:7px 17px;border-radius:7px;border:1px solid var(--b2);background:transparent;font-family:var(--fb);font-size:13px;font-weight:500;color:var(--t2);cursor:pointer;transition:all .18s;}
+.btn-o:hover{color:var(--t1);border-color:var(--b3);}
+.btn-f{padding:7px 18px;border-radius:7px;background:var(--ac);border:none;font-family:var(--fb);font-size:13px;font-weight:700;color:#080C14;cursor:pointer;transition:all .2s;}
+.btn-f:hover{background:#00F8BC;transform:translateY(-1px);}
+.btn-red{padding:7px 17px;border-radius:7px;background:rgba(255,69,96,.1);border:1px solid rgba(255,69,96,.2);font-family:var(--fb);font-size:13px;font-weight:600;color:var(--red);cursor:pointer;transition:all .18s;}
+.btn-red:hover{background:rgba(255,69,96,.18);}
+
+/* ── PAGES ── */
+.page{display:none;min-height:100vh;}
+.page.active{display:block;}
+
+/* ════════════════ HOMEPAGE ════════════════ */
+.hero{padding:140px 48px 80px;position:relative;overflow:hidden;min-height:100vh;display:flex;align-items:center;}
+.hero-glow{position:absolute;top:-80px;left:-100px;width:600px;height:600px;border-radius:50%;background:radial-gradient(circle,rgba(0,223,168,.08) 0%,transparent 68%);pointer-events:none;animation:glow 7s ease-in-out infinite;}
+.hero-glow2{position:absolute;bottom:-120px;right:-80px;width:500px;height:500px;border-radius:50%;background:radial-gradient(circle,rgba(91,141,239,.05) 0%,transparent 68%);pointer-events:none;}
+.hero-grid{position:absolute;inset:0;background-image:linear-gradient(var(--b1) 1px,transparent 1px),linear-gradient(90deg,var(--b1) 1px,transparent 1px);background-size:54px 54px;mask-image:radial-gradient(ellipse 70% 70% at 50% 45%,black 10%,transparent 100%);pointer-events:none;}
+.hero-inner{position:relative;z-index:2;max-width:680px;}
+.eyebrow{display:inline-flex;align-items:center;gap:8px;background:rgba(0,223,168,.08);border:1px solid rgba(0,223,168,.2);border-radius:100px;padding:5px 14px;margin-bottom:28px;}
+.e-dot{position:relative;width:7px;height:7px;border-radius:50%;background:var(--ac);}
+.e-dot::after{content:'';position:absolute;inset:-3px;border-radius:50%;border:1.5px solid var(--ac);animation:ping 2.2s ease-out infinite;}
+.e-txt{font-family:var(--fb);font-size:11px;font-weight:700;letter-spacing:1.2px;text-transform:uppercase;color:var(--ac);}
+.hero-h1{font-family:var(--fd);font-size:66px;font-weight:800;line-height:0.95;letter-spacing:-2.5px;color:var(--t1);margin-bottom:24px;}
+.hero-h1 .dim{color:var(--t3);}
+.hero-h1 .hi{color:var(--ac);}
+.hero-sub{font-family:var(--fb);font-size:17px;font-weight:400;line-height:1.7;color:var(--t2);max-width:460px;margin-bottom:40px;}
+.hero-ctas{display:flex;gap:12px;flex-wrap:wrap;}
+.cta-main{display:inline-flex;align-items:center;gap:9px;padding:14px 30px;border-radius:9px;background:var(--ac);color:#080C14;font-family:var(--fb);font-size:15px;font-weight:700;border:none;cursor:pointer;transition:all .22s;}
+.cta-main svg{transition:transform .2s;}
+.cta-main:hover{background:#00F8BC;transform:translateY(-2px);box-shadow:0 14px 36px rgba(0,223,168,.28);}
+.cta-main:hover svg{transform:translateX(3px);}
+.cta-sec{display:inline-flex;align-items:center;gap:9px;padding:14px 24px;border-radius:9px;background:transparent;color:var(--t2);font-family:var(--fb);font-size:15px;font-weight:500;border:1px solid var(--b2);cursor:pointer;transition:all .2s;}
+.cta-sec:hover{color:var(--t1);border-color:var(--b3);background:var(--sf);}
+.ticker-bar{background:var(--ac);height:34px;overflow:hidden;display:flex;align-items:center;}
+.ticker-inner{display:flex;white-space:nowrap;animation:ticker 20s linear infinite;}
+.tick{font-family:var(--fb);font-size:11px;font-weight:700;letter-spacing:1.3px;text-transform:uppercase;color:#04100A;padding:0 32px;display:flex;align-items:center;gap:12px;}
+.tick-sep{color:rgba(4,16,10,.3);}
+.hiw{padding:80px 48px;background:var(--bg2);border-top:1px solid var(--b1);}
+.sec-eye{display:flex;align-items:center;gap:8px;margin-bottom:16px;}
+.sec-eye-line{width:20px;height:2px;background:var(--ac);}
+.sec-eye-txt{font-family:var(--fb);font-size:11px;font-weight:700;letter-spacing:1.3px;text-transform:uppercase;color:var(--ac);}
+.sec-ttl{font-family:var(--fd);font-size:38px;font-weight:800;letter-spacing:-1.2px;line-height:1.05;color:var(--t1);margin-bottom:48px;}
+.hiw-steps{display:grid;grid-template-columns:repeat(3,1fr);gap:0;position:relative;}
+.hiw-steps::before{content:'';position:absolute;top:22px;left:16%;right:16%;height:1px;background:linear-gradient(90deg,transparent,var(--b2) 20%,var(--b2) 80%,transparent);}
+.step{padding:0 24px;text-align:center;}
+.step-circle{width:44px;height:44px;border-radius:50%;border:1px solid var(--b2);background:var(--sf);display:flex;align-items:center;justify-content:center;margin:0 auto 18px;font-family:var(--fd);font-size:15px;font-weight:800;letter-spacing:-0.4px;color:var(--ac);position:relative;z-index:1;}
+.step-circle.on{background:var(--ac);color:#080C14;border-color:var(--ac);box-shadow:0 0 24px rgba(0,223,168,.35);}
+.step-title{font-family:var(--fd);font-size:15px;font-weight:700;letter-spacing:-0.1px;color:var(--t1);margin-bottom:8px;line-height:1.3;}
+.step-desc{font-family:var(--fb);font-size:13px;color:var(--t2);line-height:1.65;}
+.trust-strip{padding:48px;border-top:1px solid var(--b1);display:grid;grid-template-columns:repeat(4,1fr);gap:0;}
+.ts-item{padding:0 32px;border-right:1px solid var(--b1);text-align:center;}
+.ts-item:last-child{border-right:none;}
+.ts-num{font-family:var(--fd);font-size:36px;font-weight:800;letter-spacing:-1.5px;color:var(--ac);line-height:1;margin-bottom:6px;}
+.ts-lbl{font-family:var(--fb);font-size:12px;font-weight:500;color:var(--t3);}
+
+/* ════════════════ AUTH ════════════════ */
+.auth-wrap{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:80px 24px;}
+.auth-box{background:var(--sf);border:1px solid var(--b2);border-radius:20px;padding:40px;width:100%;max-width:440px;position:relative;overflow:hidden;}
+.auth-box::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,var(--ac),var(--blu));}
+.auth-logo{display:flex;align-items:center;gap:9px;justify-content:center;margin-bottom:28px;}
+.auth-ttl{font-family:var(--fd);font-size:26px;font-weight:800;letter-spacing:-0.8px;color:var(--t1);margin-bottom:6px;text-align:center;}
+.auth-sub{font-family:var(--fb);font-size:14px;color:var(--t2);text-align:center;margin-bottom:32px;line-height:1.6;}
+.form-group{margin-bottom:18px;}
+.form-lbl{font-family:var(--fb);font-size:10.5px;font-weight:700;letter-spacing:1.1px;text-transform:uppercase;color:var(--t3);display:block;margin-bottom:7px;}
+.form-input{width:100%;padding:12px 15px;background:var(--bg2);border:1px solid var(--b2);border-radius:9px;color:var(--t1);font-family:var(--fb);font-size:14px;outline:none;transition:border-color .18s;}
+.form-input:focus{border-color:rgba(0,223,168,.4);box-shadow:0 0 0 3px rgba(0,223,168,.06);}
+.form-input::placeholder{color:var(--t3);}
+.form-input:disabled{opacity:.5;cursor:not-allowed;}
+.form-btn{width:100%;padding:13px;border-radius:9px;background:var(--ac);color:#080C14;font-family:var(--fb);font-size:14px;font-weight:700;border:none;cursor:pointer;transition:all .2s;margin-top:4px;display:flex;align-items:center;justify-content:center;gap:8px;}
+.form-btn:hover:not(:disabled){background:#00F8BC;transform:translateY(-1px);}
+.form-btn:disabled{opacity:.6;cursor:not-allowed;}
+.auth-switch{font-family:var(--fb);font-size:13px;color:var(--t3);text-align:center;margin-top:20px;}
+.auth-switch span{color:var(--ac);cursor:pointer;font-weight:600;}
+.auth-switch span:hover{text-decoration:underline;}
+.form-err{font-family:var(--fb);font-size:12px;color:var(--red);margin-top:8px;padding:10px 13px;background:rgba(255,69,96,.06);border:1px solid rgba(255,69,96,.15);border-radius:7px;display:none;}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
+
+/* ════════════════ DASHBOARD ════════════════ */
+.dash-shell{display:flex;min-height:100vh;}
+.dash-sb{width:236px;flex-shrink:0;background:var(--bg2);border-right:1px solid var(--b1);display:flex;flex-direction:column;position:sticky;top:0;height:100vh;overflow-y:auto;}
+.dash-sb::-webkit-scrollbar{width:0;}
+.dsb-logo{padding:20px 18px 17px;border-bottom:1px solid var(--b1);display:flex;align-items:center;gap:9px;}
+.dsb-nm{font-family:var(--fd);font-size:16px;font-weight:800;letter-spacing:-0.4px;color:var(--t1);}
+.dsb-section{padding:18px 12px 6px;}
+.dsb-lbl{font-family:var(--fb);font-size:9.5px;font-weight:700;letter-spacing:1.8px;text-transform:uppercase;color:var(--t3);padding:0 8px;margin-bottom:5px;}
+.dni{display:flex;align-items:center;gap:10px;padding:9px 11px;border-radius:8px;cursor:pointer;font-family:var(--fb);font-size:13px;font-weight:500;color:var(--t2);border:1px solid transparent;margin-bottom:2px;transition:all .15s;line-height:1.3;}
+.dni:hover{background:var(--sf);color:var(--t1);}
+.dni.on{background:var(--sf2);color:var(--t1);border-color:var(--b2);}
+.dni-ic{width:15px;height:15px;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.dnb{margin-left:auto;border-radius:4px;padding:2px 7px;font-family:var(--fb);font-size:10px;font-weight:800;background:rgba(255,69,96,.14);color:var(--red);border:1px solid rgba(255,69,96,.2);}
+.dsb-footer{margin-top:auto;padding:14px 12px;border-top:1px solid var(--b1);}
+.dsb-user{display:flex;align-items:center;gap:9px;padding:10px 12px;border-radius:8px;background:var(--sf);border:1px solid var(--b1);}
+.dsb-av{width:32px;height:32px;border-radius:8px;background:rgba(0,223,168,.12);display:flex;align-items:center;justify-content:center;font-family:var(--fd);font-size:11px;font-weight:800;color:var(--ac);flex-shrink:0;}
+.dsb-unm{font-family:var(--fb);font-size:13px;font-weight:600;color:var(--t1);line-height:1.3;}
+.dsb-urole{font-family:var(--fb);font-size:11px;color:var(--t3);}
+.dsb-logout{margin-left:auto;color:var(--t3);background:none;border:none;cursor:pointer;padding:3px;transition:color .15s;flex-shrink:0;}
+.dsb-logout:hover{color:var(--red);}
+.dash-main{flex:1;min-width:0;display:flex;flex-direction:column;}
+.dash-topbar{height:62px;padding:0 32px;display:flex;align-items:center;justify-content:space-between;background:rgba(8,12,20,.85);backdrop-filter:blur(14px);border-bottom:1px solid var(--b1);position:sticky;top:0;z-index:50;flex-shrink:0;}
+.dt-ttl{font-family:var(--fd);font-size:18px;font-weight:800;letter-spacing:-0.5px;color:var(--t1);}
+.dt-sub{font-family:var(--fb);font-size:12px;color:var(--t3);margin-top:1px;}
+.dash-content{padding:28px 32px 56px;flex:1;overflow-y:auto;}
+.kpi-row{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px;margin-bottom:22px;}
+.kpi{background:var(--sf);border:1px solid var(--b1);border-radius:13px;padding:20px;position:relative;overflow:hidden;transition:border-color .18s;}
+.kpi:hover{border-color:var(--b2);}
+.kpi::after{content:'';position:absolute;bottom:0;left:0;right:0;height:2px;transform:scaleX(0);transform-origin:left;transition:transform .3s;}
+.kpi:hover::after{transform:scaleX(1);}
+.kpi.g::after{background:var(--ac)}.kpi.b::after{background:var(--blu)}.kpi.a::after{background:var(--amb)}
+.kpi-lbl{font-family:var(--fb);font-size:10px;font-weight:700;letter-spacing:1.3px;text-transform:uppercase;color:var(--t3);margin-bottom:11px;}
+.kpi-num{font-family:var(--fd);font-size:30px;font-weight:800;letter-spacing:-1.2px;line-height:1;color:var(--t1);margin-bottom:8px;}
+.kpi-pfx{font-family:var(--fb);font-size:14px;font-weight:600;color:var(--t2);margin-right:2px;}
+.kpi-meta{font-family:var(--fb);font-size:12px;color:var(--t3);}
+.two-col{display:grid;grid-template-columns:minmax(0,1.3fr) minmax(0,1fr);gap:16px;margin-bottom:16px;}
+.col-stack{display:flex;flex-direction:column;gap:16px;}
+.dc{background:var(--sf);border:1px solid var(--b1);border-radius:14px;padding:22px;}
+.dc-hd{display:flex;justify-content:space-between;align-items:center;margin-bottom:18px;}
+.dc-ttl{font-family:var(--fd);font-size:14.5px;font-weight:700;letter-spacing:-0.2px;color:var(--t1);}
+.dc-act{font-family:var(--fb);font-size:12px;font-weight:600;color:var(--ac);background:none;border:none;cursor:pointer;display:flex;align-items:center;gap:4px;transition:gap .15s;}
+.dc-act:hover{gap:8px;}
+.camp-card{background:var(--sf2);border:1px solid var(--b1);border-radius:12px;padding:18px;margin-bottom:10px;cursor:pointer;transition:border-color .15s;}
+.camp-card:last-child{margin-bottom:0;}
+.camp-card:hover{border-color:var(--b2);}
+.cc-head{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:10px;}
+.cc-title{font-family:var(--fd);font-size:14px;font-weight:700;letter-spacing:-0.1px;color:var(--t1);line-height:1.3;max-width:200px;}
+.cc-status{display:inline-flex;align-items:center;gap:4px;padding:3px 9px;border-radius:4px;font-family:var(--fb);font-size:10px;font-weight:700;background:rgba(0,223,168,.08);border:1px solid rgba(0,223,168,.15);color:var(--ac);}
+.cc-status-exp{display:inline-flex;align-items:center;gap:4px;padding:3px 9px;border-radius:4px;font-family:var(--fb);font-size:10px;font-weight:700;background:rgba(255,255,255,.04);border:1px solid var(--b1);color:var(--t3);}
+.cc-pb-lbl{display:flex;justify-content:space-between;font-family:var(--fb);font-size:11px;margin-bottom:5px;}
+.cc-pb-raised{font-family:var(--fd);font-size:11px;font-weight:700;color:var(--t1);}
+.cc-pb-pct{font-family:var(--fb);font-size:11px;font-weight:700;color:var(--ac);}
+.cc-pb-track{height:4px;background:var(--sf3);border-radius:100px;margin-bottom:8px;overflow:hidden;}
+.cc-pb-fill{height:100%;border-radius:100px;background:var(--ac);}
+.cc-foot{display:flex;justify-content:space-between;align-items:center;}
+.cc-foot-meta{font-family:var(--fb);font-size:11px;color:var(--t3);}
+.cc-link-btn{display:flex;align-items:center;gap:5px;padding:5px 11px;border-radius:5px;font-family:var(--fb);font-size:11px;font-weight:700;background:rgba(0,223,168,.08);border:1px solid rgba(0,223,168,.18);color:var(--ac);cursor:pointer;transition:all .15s;}
+.cc-link-btn:hover{background:rgba(0,223,168,.16);}
+.dvc{background:var(--sf2);border:1px solid var(--b1);border-radius:12px;padding:18px;margin-bottom:10px;transition:opacity .3s;}
+.dvc:last-child{margin-bottom:0;}
+.dvc-name{font-family:var(--fb);font-size:14px;font-weight:600;color:var(--t1);}
+.dvc-meta{font-family:var(--fb);font-size:12px;color:var(--t3);margin-top:2px;}
+.dvc-amt{font-family:var(--fd);font-size:18px;font-weight:800;letter-spacing:-0.5px;color:var(--t1);}
+.dvc-screenshot{width:100%;height:120px;border-radius:8px;object-fit:cover;border:1px solid var(--b1);margin:12px 0;cursor:pointer;transition:opacity .15s;}
+.dvc-screenshot:hover{opacity:.85;}
+.dvc-no-ss{width:100%;height:80px;border-radius:8px;background:var(--sf3);border:1px solid var(--b1);display:flex;align-items:center;justify-content:center;gap:7px;margin:12px 0;}
+.dvc-actions{display:flex;gap:8px;}
+.dvc-v{flex:1;padding:9px;border-radius:7px;font-family:var(--fb);font-size:13px;font-weight:700;background:rgba(0,223,168,.1);border:1px solid rgba(0,223,168,.22);color:var(--ac);cursor:pointer;transition:all .15s;}
+.dvc-v:hover{background:rgba(0,223,168,.18);}
+.dvc-v:disabled{opacity:.5;cursor:not-allowed;}
+.dvc-r{padding:9px 16px;border-radius:7px;font-family:var(--fb);font-size:13px;font-weight:700;background:rgba(255,69,96,.08);border:1px solid rgba(255,69,96,.16);color:var(--red);cursor:pointer;transition:all .15s;}
+.dvc-r:hover{background:rgba(255,69,96,.15);}
+.dvc-r:disabled{opacity:.5;cursor:not-allowed;}
+
+/* ── MILESTONE BANNERS ── */
+#milestone-banners{display:flex;flex-direction:column;gap:8px;margin-bottom:20px;}
+.milestone-banner{border-radius:10px;padding:14px 18px;display:flex;align-items:center;justify-content:space-between;gap:12px;}
+.mb-50{background:rgba(0,223,168,.07);border:1px solid rgba(0,223,168,.2);}
+.mb-100{background:rgba(0,223,168,.12);border:1px solid rgba(0,223,168,.32);}
+.mb-txt{font-family:var(--fb);font-size:13px;font-weight:600;color:var(--ac);line-height:1.5;}
+.mb-close{color:var(--t3);background:none;border:none;cursor:pointer;font-size:16px;line-height:1;padding:2px;flex-shrink:0;transition:color .15s;}
+.mb-close:hover{color:var(--t1);}
+
+/* ════════════════ CREATE ════════════════ */
+.create-wrap{padding:90px 48px 64px;max-width:760px;margin:0 auto;}
+.create-ttl{font-family:var(--fd);font-size:36px;font-weight:800;letter-spacing:-1.2px;color:var(--t1);margin-bottom:8px;}
+.create-sub{font-family:var(--fb);font-size:15px;color:var(--t2);margin-bottom:40px;line-height:1.65;}
+.create-section{background:var(--sf);border:1px solid var(--b1);border-radius:16px;padding:28px;margin-bottom:18px;}
+.cs-ttl{font-family:var(--fd);font-size:15px;font-weight:700;letter-spacing:-0.1px;color:var(--t1);margin-bottom:18px;display:flex;align-items:center;gap:9px;}
+.cs-ttl-ic{width:28px;height:28px;border-radius:7px;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.payment-tabs{display:flex;gap:6px;margin-bottom:14px;}
+.ptab{padding:7px 16px;border-radius:6px;font-family:var(--fb);font-size:12.5px;font-weight:600;border:1px solid var(--b1);background:transparent;color:var(--t3);cursor:pointer;transition:all .15s;}
+.ptab.on{background:rgba(0,223,168,.08);border-color:rgba(0,223,168,.22);color:var(--ac);}
+.ptab:hover:not(.on){color:var(--t2);}
+.upload-zone{border:1.5px dashed var(--b2);border-radius:11px;padding:28px;text-align:center;cursor:pointer;transition:all .15s;position:relative;}
+.upload-zone:hover{border-color:rgba(0,223,168,.3);background:rgba(0,223,168,.02);}
+.upload-zone input[type=file]{position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;height:100%;}
+.uz-ic{width:42px;height:42px;border-radius:10px;background:rgba(0,223,168,.07);display:flex;align-items:center;justify-content:center;margin:0 auto 10px;}
+.uz-txt{font-family:var(--fb);font-size:13px;font-weight:500;color:var(--t2);}
+.uz-sub{font-family:var(--fb);font-size:11px;color:var(--t3);margin-top:3px;}
+.preview-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-top:12px;}
+.preview-img{width:100%;aspect-ratio:1;border-radius:7px;object-fit:cover;border:1px solid var(--b1);}
+.create-submit{width:100%;padding:15px;border-radius:10px;background:var(--ac);color:#080C14;font-family:var(--fb);font-size:15px;font-weight:700;border:none;cursor:pointer;transition:all .22s;display:flex;align-items:center;justify-content:center;gap:9px;margin-top:8px;}
+.create-submit:hover:not(:disabled){background:#00F8BC;transform:translateY(-2px);box-shadow:0 12px 32px rgba(0,223,168,.28);}
+.create-submit:disabled{opacity:.6;cursor:not-allowed;}
+.pay2-toggle{height:1px;background:var(--b1);margin:22px 0 18px;}
+.pay2-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;}
+.pay2-lbl{font-family:var(--fb);font-size:10.5px;font-weight:700;letter-spacing:1.1px;text-transform:uppercase;color:var(--t3);}
+.pay2-badge{font-family:var(--fb);font-size:10px;font-weight:600;color:var(--t3);background:var(--sf3);border:1px solid var(--b1);border-radius:4px;padding:2px 7px;margin-left:8px;}
+.add-pay2-btn{display:inline-flex;align-items:center;gap:5px;padding:6px 13px;border-radius:6px;background:transparent;border:1px solid var(--b2);color:var(--t2);font-family:var(--fb);font-size:12px;font-weight:600;cursor:pointer;transition:all .15s;}
+.add-pay2-btn:hover{color:var(--t1);border-color:var(--b3);}
+.remove-pay2-btn{display:inline-flex;align-items:center;gap:5px;padding:6px 13px;border-radius:6px;background:rgba(255,69,96,.06);border:1px solid rgba(255,69,96,.16);color:var(--red);font-family:var(--fb);font-size:12px;font-weight:600;cursor:pointer;transition:all .15s;}
+.remove-pay2-btn:hover{background:rgba(255,69,96,.12);}
+
+/* ════════════════ PUBLIC CAMPAIGN ════════════════ */
+.pub-page{padding-top:62px;}
+.pub-hero{padding:48px 48px 0;max-width:1200px;margin:0 auto;}
+.pub-top{display:grid;grid-template-columns:minmax(0,1fr) 360px;gap:40px;align-items:start;}
+.pub-tags{display:flex;gap:7px;margin-bottom:16px;flex-wrap:wrap;}
+.pub-tag{display:inline-flex;align-items:center;gap:4px;padding:4px 11px;border-radius:5px;font-family:var(--fb);font-size:10px;font-weight:700;letter-spacing:.7px;text-transform:uppercase;}
+.pt-verified{background:rgba(0,223,168,.08);border:1px solid rgba(0,223,168,.18);color:var(--ac);}
+.pt-cat{background:var(--sf2);border:1px solid var(--b1);color:var(--t2);}
+.pt-expired{background:rgba(255,69,96,.08);border:1px solid rgba(255,69,96,.18);color:var(--red);}
+.pub-title{font-family:var(--fd);font-size:36px;font-weight:800;letter-spacing:-1.2px;line-height:1.06;color:var(--t1);margin-bottom:14px;}
+.pub-organizer{display:flex;align-items:center;gap:10px;margin-bottom:24px;}
+.pub-org-av{width:36px;height:36px;border-radius:9px;background:var(--sf2);display:flex;align-items:center;justify-content:center;font-family:var(--fd);font-size:12px;font-weight:800;color:var(--ac);}
+.pub-org-nm{font-family:var(--fb);font-size:14px;font-weight:600;color:var(--t1);}
+.pub-org-phone{font-family:var(--fb);font-size:12px;color:var(--t3);}
+.pub-description{font-family:var(--fb);font-size:15px;font-weight:400;color:var(--t2);line-height:1.78;margin-bottom:32px;}
+.pub-proof-ttl{font-family:var(--fd);font-size:15px;font-weight:700;letter-spacing:-0.1px;color:var(--t1);margin-bottom:14px;}
+.pub-proof-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:40px;}
+.pub-proof-img{width:100%;aspect-ratio:4/3;border-radius:10px;object-fit:cover;border:1px solid var(--b1);cursor:pointer;transition:all .18s;}
+.pub-proof-img:hover{transform:scale(1.02);border-color:var(--b2);}
+.pub-sidebar{position:sticky;top:76px;}
+.donate-card{background:var(--sf);border:1px solid var(--b2);border-radius:18px;padding:24px;position:relative;overflow:hidden;}
+.donate-card::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,var(--ac),var(--blu));}
+.dc-raised-row{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:8px;}
+.dc-raised-num{font-family:var(--fd);font-size:28px;font-weight:800;letter-spacing:-1px;color:var(--ac);line-height:1;}
+.dc-raised-pfx{font-family:var(--fb);font-size:14px;font-weight:600;color:var(--t2);margin-right:3px;}
+.dc-goal{font-family:var(--fb);font-size:13px;color:var(--t3);}
+.dc-pbar-track{height:6px;background:var(--sf3);border-radius:100px;overflow:hidden;margin-bottom:8px;}
+.dc-pbar-fill{height:100%;border-radius:100px;background:var(--ac);}
+.dc-pbar-pct{font-family:var(--fb);font-size:11px;font-weight:700;color:var(--ac);margin-bottom:20px;}
+.dc-divider{height:1px;background:var(--b1);margin-bottom:20px;}
+.dc-bank-lbl{font-family:var(--fb);font-size:10px;font-weight:700;letter-spacing:1.1px;text-transform:uppercase;color:var(--t3);margin-bottom:10px;}
+.dc-bank-item{background:var(--bg2);border:1px solid var(--b1);border-radius:9px;padding:13px 15px;margin-bottom:8px;}
+.dc-bank-method{font-family:var(--fb);font-size:10.5px;font-weight:700;letter-spacing:.6px;text-transform:uppercase;color:var(--t3);margin-bottom:4px;}
+.dc-bank-num{font-family:'Courier New',monospace;font-size:15px;font-weight:700;color:var(--t1);letter-spacing:.5px;}
+.dc-bank-name{font-family:var(--fb);font-size:12px;color:var(--t2);margin-top:2px;}
+.dc-copy-btn{display:flex;align-items:center;gap:4px;font-family:var(--fb);font-size:11px;color:var(--t3);background:none;border:none;cursor:pointer;padding:0;margin-top:5px;transition:color .15s;}
+.dc-copy-btn:hover{color:var(--ac);}
+.dc-donate-btn{width:100%;padding:14px;border-radius:9px;background:var(--ac);color:#080C14;font-family:var(--fb);font-size:14px;font-weight:700;border:none;cursor:pointer;transition:all .2s;margin-top:16px;display:flex;align-items:center;justify-content:center;gap:8px;}
+.dc-donate-btn:hover{background:#00F8BC;transform:translateY(-2px);}
+.pub-donors-section{padding:40px 48px 64px;max-width:1200px;margin:0 auto;}
+.pub-don-item{display:flex;align-items:center;gap:12px;padding:11px 0;border-bottom:1px solid var(--b1);}
+.pub-don-item:last-child{border-bottom:none;}
+.pub-don-av{width:34px;height:34px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-family:var(--fd);font-size:11px;font-weight:800;flex-shrink:0;}
+.pub-don-nm{font-family:var(--fb);font-size:13px;font-weight:600;color:var(--t1);margin-bottom:2px;line-height:1.3;}
+.pub-don-time{font-family:var(--fb);font-size:11px;color:var(--t3);}
+.pub-don-amt{font-family:var(--fd);font-size:14px;font-weight:800;letter-spacing:-0.3px;color:var(--t1);margin-left:auto;flex-shrink:0;}
+.stt{display:inline-flex;align-items:center;gap:3px;padding:2px 7px;border-radius:4px;font-family:var(--fb);font-size:10px;font-weight:700;margin-left:8px;}
+.stt-v{background:rgba(0,223,168,.08);color:var(--ac);}
+.stt-p{background:rgba(245,166,35,.08);color:var(--amb);}
+
+/* Campaign Closed Banner */
+.camp-closed-banner{background:rgba(255,69,96,.06);border:1px solid rgba(255,69,96,.2);border-radius:12px;padding:16px 20px;margin-bottom:20px;display:flex;align-items:center;gap:14px;}
+.ccb-ic{width:38px;height:38px;border-radius:9px;background:rgba(255,69,96,.1);display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.ccb-ttl{font-family:var(--fd);font-size:14px;font-weight:700;color:var(--red);}
+.ccb-sub{font-family:var(--fb);font-size:12px;color:var(--t3);margin-top:2px;line-height:1.5;}
+
+/* ════════════════ MODAL ════════════════ */
+.modal-bg{position:fixed;inset:0;background:rgba(0,0,0,.78);backdrop-filter:blur(10px);z-index:200;display:none;align-items:center;justify-content:center;padding:24px;}
+.modal-bg.open{display:flex;}
+.modal-box{background:var(--sf);border:1px solid var(--b2);border-radius:22px;padding:36px;width:100%;max-width:460px;position:relative;overflow:hidden;max-height:90vh;overflow-y:auto;}
+.modal-box::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,var(--ac),var(--blu));}
+.modal-close{position:absolute;top:16px;right:16px;width:30px;height:30px;border-radius:7px;background:var(--sf2);border:none;cursor:pointer;color:var(--t2);display:flex;align-items:center;justify-content:center;font-size:16px;transition:all .15s;}
+.modal-close:hover{color:var(--t1);}
+.modal-ttl{font-family:var(--fd);font-size:22px;font-weight:800;letter-spacing:-0.7px;color:var(--t1);margin-bottom:5px;}
+.modal-sub{font-family:var(--fb);font-size:13px;color:var(--t2);margin-bottom:26px;line-height:1.6;}
+.upload-area{border:1.5px dashed var(--b2);border-radius:10px;padding:20px;text-align:center;cursor:pointer;transition:all .15s;position:relative;margin-bottom:6px;}
+.upload-area:hover{border-color:rgba(0,223,168,.3);background:rgba(0,223,168,.02);}
+.upload-area input[type=file]{position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;height:100%;}
+.ua-ic{width:40px;height:40px;border-radius:10px;background:rgba(0,223,168,.07);display:flex;align-items:center;justify-content:center;margin:0 auto 8px;}
+.ua-txt{font-family:var(--fb);font-size:13px;font-weight:500;color:var(--t2);}
+.ua-sub{font-family:var(--fb);font-size:11px;color:var(--t3);margin-top:3px;}
+.ua-preview{width:100%;height:140px;border-radius:9px;object-fit:cover;border:1px solid var(--b1);display:none;margin-bottom:12px;}
+.modal-submit{width:100%;padding:14px;border-radius:9px;background:var(--ac);color:#080C14;font-family:var(--fb);font-size:14px;font-weight:700;border:none;cursor:pointer;transition:all .2s;display:flex;align-items:center;justify-content:center;gap:8px;}
+.modal-submit:hover:not(:disabled){background:#00F8BC;transform:translateY(-1px);}
+.modal-submit:disabled{opacity:.6;cursor:not-allowed;}
+.success-state{text-align:center;padding:20px 0;display:none;}
+.success-ic{width:64px;height:64px;border-radius:50%;background:rgba(0,223,168,.1);border:2px solid rgba(0,223,168,.25);display:flex;align-items:center;justify-content:center;margin:0 auto 18px;}
+.success-ttl{font-family:var(--fd);font-size:22px;font-weight:800;letter-spacing:-0.6px;color:var(--t1);margin-bottom:8px;}
+.success-sub{font-family:var(--fb);font-size:14px;color:var(--t2);line-height:1.65;}
+
+/* ════════════════ EMAIL VERIFY PAGE ════════════════ */
+.verify-wrap{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:80px 24px;position:relative;overflow:hidden;}
+.verify-glow{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:600px;height:600px;border-radius:50%;background:radial-gradient(circle,rgba(0,223,168,.06) 0%,transparent 68%);pointer-events:none;animation:glow 6s ease-in-out infinite;}
+.verify-box{background:var(--sf);border:1px solid var(--b2);border-radius:24px;padding:48px 40px;width:100%;max-width:460px;position:relative;overflow:hidden;text-align:center;z-index:2;}
+.verify-box::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,var(--ac),var(--blu));}
+.verify-icon-wrap{width:80px;height:80px;border-radius:50%;background:rgba(0,223,168,.08);border:2px solid rgba(0,223,168,.18);display:flex;align-items:center;justify-content:center;margin:0 auto 24px;position:relative;}
+.verify-icon-wrap::after{content:'';position:absolute;inset:-6px;border-radius:50%;border:1.5px solid rgba(0,223,168,.1);animation:ping 3s ease-out infinite;}
+.verify-ttl{font-family:var(--fd);font-size:26px;font-weight:800;letter-spacing:-0.8px;color:var(--t1);margin-bottom:10px;}
+.verify-sub{font-family:var(--fb);font-size:14px;color:var(--t2);line-height:1.7;margin-bottom:10px;}
+.verify-email-chip{display:inline-flex;align-items:center;gap:7px;background:rgba(0,223,168,.06);border:1px solid rgba(0,223,168,.15);border-radius:100px;padding:6px 16px;margin-bottom:28px;}
+.vec-dot{width:6px;height:6px;border-radius:50%;background:var(--ac);flex-shrink:0;}
+.vec-txt{font-family:var(--fb);font-size:13px;font-weight:600;color:var(--ac);}
+.verify-steps{background:var(--bg2);border:1px solid var(--b1);border-radius:12px;padding:18px 20px;margin-bottom:28px;text-align:left;}
+.vs-item{display:flex;align-items:center;gap:12px;padding:7px 0;border-bottom:1px solid var(--b1);}
+.vs-item:last-child{border-bottom:none;}
+.vs-num{width:22px;height:22px;border-radius:50%;background:rgba(0,223,168,.1);border:1px solid rgba(0,223,168,.2);display:flex;align-items:center;justify-content:center;font-family:var(--fd);font-size:10px;font-weight:800;color:var(--ac);flex-shrink:0;}
+.vs-txt{font-family:var(--fb);font-size:13px;color:var(--t2);line-height:1.4;}
+.verify-done-btn{width:100%;padding:13px;border-radius:9px;background:var(--ac);color:#080C14;font-family:var(--fb);font-size:14px;font-weight:700;border:none;cursor:pointer;transition:all .2s;display:flex;align-items:center;justify-content:center;gap:8px;margin-bottom:12px;}
+.verify-done-btn:hover{background:#00F8BC;transform:translateY(-1px);}
+.verify-done-btn:disabled{opacity:.6;cursor:not-allowed;transform:none;}
+.verify-resend-btn{width:100%;padding:11px;border-radius:9px;background:transparent;border:1px solid var(--b2);color:var(--t2);font-family:var(--fb);font-size:13px;font-weight:600;cursor:pointer;transition:all .18s;display:flex;align-items:center;justify-content:center;gap:7px;margin-bottom:20px;}
+.verify-resend-btn:hover:not(:disabled){color:var(--t1);border-color:var(--b3);}
+.verify-resend-btn:disabled{opacity:.45;cursor:not-allowed;}
+.verify-footer{font-family:var(--fb);font-size:12px;color:var(--t3);line-height:1.6;}
+.verify-footer span{color:var(--ac);cursor:pointer;font-weight:600;}
+.verify-footer span:hover{text-decoration:underline;}
+.verify-err{font-family:var(--fb);font-size:12px;color:var(--red);padding:10px 13px;background:rgba(255,69,96,.06);border:1px solid rgba(255,69,96,.15);border-radius:7px;margin-bottom:14px;display:none;}
+.verify-ok{font-family:var(--fb);font-size:12px;color:var(--ac);padding:10px 13px;background:rgba(0,223,168,.06);border:1px solid rgba(0,223,168,.15);border-radius:7px;margin-bottom:14px;display:none;}
+/* countdown timer for resend */
+#resend-countdown{font-variant-numeric:tabular-nums;}
+
+/* ════════════════ BROWSE PAGE ════════════════ */
+.browse-wrap{padding:90px 48px 64px;max-width:1200px;margin:0 auto;}
+.browse-hd{margin-bottom:32px;}
+.browse-ttl{font-family:var(--fd);font-size:36px;font-weight:800;letter-spacing:-1.2px;color:var(--t1);margin-bottom:8px;}
+.browse-sub{font-family:var(--fb);font-size:15px;color:var(--t2);margin-bottom:28px;line-height:1.65;}
+.browse-search-wrap{position:relative;max-width:480px;}
+.browse-search{width:100%;padding:12px 15px 12px 42px;background:var(--sf);border:1px solid var(--b2);border-radius:10px;color:var(--t1);font-family:var(--fb);font-size:14px;outline:none;transition:border-color .18s;}
+.browse-search:focus{border-color:rgba(0,223,168,.4);box-shadow:0 0 0 3px rgba(0,223,168,.06);}
+.browse-search::placeholder{color:var(--t3);}
+.browse-search-ic{position:absolute;left:14px;top:50%;transform:translateY(-50%);pointer-events:none;}
+.browse-count{font-family:var(--fb);font-size:12px;color:var(--t3);margin-top:10px;}
+.browse-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:16px;margin-top:28px;}
+.browse-card{background:var(--sf);border:1px solid var(--b1);border-radius:14px;padding:22px;transition:border-color .18s,transform .18s;}
+.browse-card:hover{border-color:var(--b2);transform:translateY(-2px);}
+.bc-title{font-family:var(--fd);font-size:16px;font-weight:700;letter-spacing:-0.2px;color:var(--t1);margin-bottom:5px;line-height:1.35;}
+.bc-org{font-family:var(--fb);font-size:12px;color:var(--t3);margin-bottom:16px;}
+.bc-raised-row{display:flex;align-items:baseline;gap:6px;margin-bottom:4px;}
+.bc-raised{font-family:var(--fd);font-size:22px;font-weight:800;letter-spacing:-0.8px;color:var(--ac);}
+.bc-raised-pfx{font-family:var(--fb);font-size:12px;font-weight:600;color:var(--t2);}
+.bc-goal{font-family:var(--fb);font-size:12px;color:var(--t3);margin-bottom:10px;}
+.bc-pb-track{height:5px;background:var(--sf3);border-radius:100px;overflow:hidden;margin-bottom:6px;}
+.bc-pb-fill{height:100%;border-radius:100px;background:var(--ac);}
+.bc-pct{font-family:var(--fb);font-size:11px;font-weight:700;color:var(--ac);margin-bottom:16px;}
+.bc-view-btn{width:100%;padding:10px;border-radius:8px;background:rgba(0,223,168,.08);border:1px solid rgba(0,223,168,.18);color:var(--ac);font-family:var(--fb);font-size:13px;font-weight:700;cursor:pointer;transition:all .15s;}
+.bc-view-btn:hover{background:rgba(0,223,168,.16);}
+.bc-exp-tag{display:inline-flex;align-items:center;padding:2px 8px;border-radius:4px;font-family:var(--fb);font-size:10px;font-weight:700;background:rgba(255,69,96,.07);border:1px solid rgba(255,69,96,.15);color:var(--red);margin-left:6px;}
+
+/* ════════════════ MISC ════════════════ */
+.lightbox{position:fixed;inset:0;background:rgba(0,0,0,.92);z-index:300;display:none;align-items:center;justify-content:center;}
+.lightbox.open{display:flex;}
+.lightbox img{max-width:90vw;max-height:90vh;border-radius:12px;object-fit:contain;}
+.lightbox-close{position:absolute;top:20px;right:24px;color:#fff;font-size:28px;cursor:pointer;background:none;border:none;line-height:1;}
+#toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%);z-index:9999;background:var(--sf);border:1px solid var(--b2);border-radius:10px;padding:13px 20px;font-family:var(--fb);font-size:13px;font-weight:500;color:var(--t1);box-shadow:0 16px 40px rgba(0,0,0,.5);display:none;align-items:center;gap:9px;white-space:nowrap;}
+#toast.show{display:flex;animation:fadeUp .3s ease both;}
+#toast.success{border-color:rgba(0,223,168,.3);color:var(--ac);}
+#toast.error{border-color:rgba(255,69,96,.3);color:var(--red);}
+.empty-state{text-align:center;padding:48px 24px;}
+.empty-ic{width:56px;height:56px;border-radius:14px;background:var(--sf2);display:flex;align-items:center;justify-content:center;margin:0 auto 16px;}
+.empty-ttl{font-family:var(--fd);font-size:18px;font-weight:700;letter-spacing:-0.3px;color:var(--t1);margin-bottom:7px;}
+.empty-sub{font-family:var(--fb);font-size:13px;color:var(--t3);margin-bottom:20px;line-height:1.6;}
+.empty-btn{display:inline-flex;align-items:center;gap:7px;padding:10px 22px;border-radius:8px;background:var(--ac);color:#080C14;font-family:var(--fb);font-size:13px;font-weight:700;border:none;cursor:pointer;transition:all .18s;}
+.empty-btn:hover{background:#00F8BC;}
+.spin-sm{width:16px;height:16px;border:2px solid rgba(8,12,20,.3);border-top-color:#080C14;border-radius:50%;animation:spin .6s linear infinite;}
+.spin-sm.light{border-color:var(--b2);border-top-color:var(--ac);}
+</style>
+</head>
+<body>
+
+<!-- GLOBAL LOADER -->
+<div id="globalLoader">
+  <div class="loader-spin"></div>
+  <div class="loader-txt">Loading Amanat...</div>
+</div>
+
+<!-- NAV -->
+<nav class="nav" id="mainNav">
+  <div class="nav-logo" onclick="goHome()">
+    <div class="logo-mk"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#080C14" stroke-width="2.5" stroke-linecap="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg></div>
+    <span class="logo-nm">Amanat</span>
+  </div>
+  <div class="nav-r" id="navRight">
+    <button class="btn-o" onclick="showPage('browse')">Browse Campaigns</button>
+    <button class="btn-o" onclick="showPage('login')">Log In</button>
+    <button class="btn-f" onclick="showPage('signup')">Start a Campaign →</button>
+  </div>
+</nav>
+
+<!-- ═══ HOMEPAGE ═══ -->
+<div class="page active" id="page-home">
+  <section class="hero">
+    <div class="hero-glow"></div><div class="hero-glow2"></div><div class="hero-grid"></div>
+    <div class="hero-inner">
+      <div class="eyebrow au"><div class="e-dot"></div><span class="e-txt">Pakistan's Transparent Donation Platform</span></div>
+      <h1 class="hero-h1 au1">Every Rupee.<br><span class="dim">Every</span> <span class="hi">Receipt.</span><br><span class="dim">No Doubts.</span></h1>
+      <p class="hero-sub au2">Create a campaign, share the link, and donations go directly to your account. No middlemen. Everything is public and accountable.</p>
+      <div class="hero-ctas au3">
+        <button class="cta-main" onclick="showPage('signup')">Start a Campaign <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></button>
+        <button class="cta-sec" onclick="showPage('browse')"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>Browse Campaigns</button>
+      </div>
+    </div>
+  </section>
+  <div class="ticker-bar"><div class="ticker-inner">
+    <span class="tick">Transparent<span class="tick-sep">✦</span></span>
+    <span class="tick">No Middlemen<span class="tick-sep">✦</span></span>
+    <span class="tick">Donors Send Directly<span class="tick-sep">✦</span></span>
+    <span class="tick">Screenshot Proof Required<span class="tick-sep">✦</span></span>
+    <span class="tick">Free to Use<span class="tick-sep">✦</span></span>
+    <span class="tick">Transparent<span class="tick-sep">✦</span></span>
+    <span class="tick">No Middlemen<span class="tick-sep">✦</span></span>
+    <span class="tick">Donors Send Directly<span class="tick-sep">✦</span></span>
+    <span class="tick">Screenshot Proof Required<span class="tick-sep">✦</span></span>
+    <span class="tick">Free to Use<span class="tick-sep">✦</span></span>
+  </div></div>
+  <section class="hiw">
+    <div class="sec-eye"><div class="sec-eye-line"></div><span class="sec-eye-txt">How It Works</span></div>
+    <h2 class="sec-ttl">Simple. Transparent. Trusted.</h2>
+    <div class="hiw-steps">
+      <div class="step"><div class="step-circle on">01</div><div class="step-title">Create Your Campaign</div><div class="step-desc">Create an account, fill in your case details, upload proof images, and add your payment number.</div></div>
+      <div class="step"><div class="step-circle">02</div><div class="step-title">Share Your Link</div><div class="step-desc">Share on WhatsApp, Facebook — anywhere you like. Donors can see your complete case with proof.</div></div>
+      <div class="step"><div class="step-circle">03</div><div class="step-title">Verify Donations</div><div class="step-desc">Donors transfer directly and upload a screenshot. You verify it and it appears on the public ledger.</div></div>
+    </div>
+  </section>
+  <div class="trust-strip">
+    <div class="ts-item"><div class="ts-num">100%</div><div class="ts-lbl">Free to use</div></div>
+    <div class="ts-item"><div class="ts-num">0</div><div class="ts-lbl">Middlemen</div></div>
+    <div class="ts-item"><div class="ts-num">Direct</div><div class="ts-lbl">Bank transfers</div></div>
+    <div class="ts-item"><div class="ts-num">Proof</div><div class="ts-lbl">Screenshot required</div></div>
+  </div>
+</div>
+
+<!-- ═══ LOGIN ═══ -->
+<div class="page" id="page-login">
+  <div class="auth-wrap">
+    <div class="auth-box au">
+      <div class="auth-logo"><div class="logo-mk"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#080C14" stroke-width="2.5" stroke-linecap="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg></div><span class="logo-nm">Amanat</span></div>
+      <div class="auth-ttl">Welcome back</div>
+      <div class="auth-sub">Manage your campaigns and verify incoming donations.</div>
+      <div class="form-group"><label class="form-lbl">Email Address</label><input class="form-input" id="login-email" type="email" placeholder="ahmed@example.com"/></div>
+      <div class="form-group"><label class="form-lbl">Password</label><input class="form-input" id="login-password" type="password" placeholder="Enter your password" onkeydown="if(event.key==='Enter')doLogin()"/></div>
+      <div class="form-err" id="login-err"></div>
+      <button class="form-btn" id="login-btn" onclick="doLogin()">Log In →</button>
+      <div class="auth-switch">Don't have an account? <span onclick="showPage('signup')">Sign up free</span></div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ SIGNUP ═══ -->
+<div class="page" id="page-signup">
+  <div class="auth-wrap">
+    <div class="auth-box au">
+      <div class="auth-logo"><div class="logo-mk"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#080C14" stroke-width="2.5" stroke-linecap="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg></div><span class="logo-nm">Amanat</span></div>
+      <div class="auth-ttl">Create your account</div>
+      <div class="auth-sub">Free to use. Takes just 2 minutes. Then launch your campaign.</div>
+      <div class="form-row">
+        <div class="form-group"><label class="form-lbl">Full Name</label><input class="form-input" id="su-name" type="text" placeholder="Ahmed Usman"/></div>
+        <div class="form-group"><label class="form-lbl">Phone</label><input class="form-input" id="su-phone" type="tel" placeholder="03001234567"/></div>
+      </div>
+      <div class="form-group"><label class="form-lbl">Email Address</label><input class="form-input" id="su-email" type="email" placeholder="ahmed@example.com"/></div>
+      <div class="form-group"><label class="form-lbl">Password</label><input class="form-input" id="su-password" type="password" placeholder="Min 6 characters"/></div>
+      <div class="form-err" id="signup-err"></div>
+      <button class="form-btn" id="signup-btn" onclick="doSignup()">Create Account →</button>
+      <div class="auth-switch">Already have an account? <span onclick="showPage('login')">Log in</span></div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ DASHBOARD ═══ -->
+<div class="page" id="page-dashboard">
+  <div class="dash-shell">
+    <aside class="dash-sb">
+      <div class="dsb-logo"><div class="logo-mk"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#080C14" stroke-width="2.5" stroke-linecap="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg></div><span class="dsb-nm">Amanat</span></div>
+      <div class="dsb-section">
+        <div class="dsb-lbl">Menu</div>
+        <div class="dni on" onclick="dashTab(this,'overview')"><span class="dni-ic"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg></span>Overview</div>
+        <div class="dni" onclick="dashTab(this,'campaigns')"><span class="dni-ic"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg></span>My Campaigns</div>
+        <div class="dni" id="verifyNavItem" onclick="dashTab(this,'verify')"><span class="dni-ic"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg></span>Verify Donations<span class="dnb" id="pendingBadge" style="display:none">0</span></div>
+      </div>
+      <div class="dsb-footer">
+        <div class="dsb-user"><div class="dsb-av" id="sbAv">?</div><div style="min-width:0"><div class="dsb-unm" id="sbNm">Loading...</div><div class="dsb-urole">Organizer</div></div><button class="dsb-logout" onclick="doLogout()"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg></button></div>
+      </div>
+    </aside>
+    <div class="dash-main">
+      <div class="dash-topbar"><div><div class="dt-ttl" id="dashTabTtl">Overview</div><div class="dt-sub" id="dashTabSub">Manage your campaigns and donations</div></div><div><button class="btn-f" onclick="showPage('create')">+ New Campaign</button></div></div>
+      <div class="dash-content">
+        <!-- Milestone notification banners -->
+        <div id="milestone-banners"></div>
+        <div id="tab-overview">
+          <div class="kpi-row au">
+            <div class="kpi g"><div class="kpi-lbl">Total Raised</div><div class="kpi-num" id="kpi-raised"><span class="kpi-pfx">PKR</span>0</div><div class="kpi-meta">all campaigns</div></div>
+            <div class="kpi b"><div class="kpi-lbl">Total Donations</div><div class="kpi-num" id="kpi-total" style="color:var(--blu)">0</div><div class="kpi-meta">submitted</div></div>
+            <div class="kpi a"><div class="kpi-lbl">Pending Review</div><div class="kpi-num" id="kpi-pend" style="color:var(--amb)">0</div><div class="kpi-meta">need verification</div></div>
+          </div>
+          <div class="two-col au1">
+            <div class="dc"><div class="dc-hd"><div class="dc-ttl">My Campaigns</div><button class="dc-act" onclick="dashTab(document.querySelectorAll('.dni')[1],'campaigns')">View all →</button></div><div id="ov-camps"></div></div>
+            <div class="dc"><div class="dc-hd"><div class="dc-ttl">Pending Donations</div><button class="dc-act" onclick="dashTab(document.getElementById('verifyNavItem'),'verify')">Review all →</button></div><div id="ov-pend"></div></div>
+          </div>
+        </div>
+        <div id="tab-campaigns" style="display:none"><div id="camps-full"></div></div>
+        <div id="tab-verify" style="display:none"><div id="verify-list"></div></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ CREATE CAMPAIGN ═══ -->
+<div class="page" id="page-create">
+  <div class="create-wrap">
+    <div class="au">
+      <button onclick="showPage('dashboard')" style="display:flex;align-items:center;gap:6px;font-family:var(--fb);font-size:13px;font-weight:500;color:var(--t3);background:none;border:none;cursor:pointer;margin-bottom:8px;transition:color .15s;" onmouseover="this.style.color='#fff'" onmouseout="this.style.color='var(--t3)'"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>Back to Dashboard</button>
+      <div class="create-ttl">Create Campaign</div>
+      <div class="create-sub">Fill in the details, upload proof images, and add your payment information. Your campaign goes live instantly.</div>
+    </div>
+    <div class="create-section au1">
+      <div class="cs-ttl"><div class="cs-ttl-ic" style="background:rgba(0,223,168,.1)"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#00DFA8" stroke-width="2" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></div>Campaign Details</div>
+      <div class="form-group"><label class="form-lbl">Campaign Title</label><input class="form-input" id="c-title" type="text" placeholder="e.g. Medical Treatment for Baby Maryam — Faisalabad"/></div>
+      <div class="form-group"><label class="form-lbl">Your Story — Tell donors why you need help</label><textarea class="form-input" id="c-desc" rows="5" style="resize:vertical;line-height:1.65;" placeholder="Explain your situation clearly. The more honest and detailed you are, the more trust you will build with donors..."></textarea></div>
+      <div class="form-row">
+        <div class="form-group"><label class="form-lbl">Target Amount (PKR)</label><input class="form-input" id="c-target" type="number" placeholder="500000"/></div>
+        <div class="form-group"><label class="form-lbl">Campaign End Date</label><input class="form-input" id="c-date" type="date"/></div>
+      </div>
+    </div>
+    <div class="create-section au1">
+      <div class="cs-ttl"><div class="cs-ttl-ic" style="background:rgba(91,141,239,.1)"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#5B8DEF" stroke-width="2" stroke-linecap="round"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg></div>Proof Images <span style="font-family:var(--fb);font-size:12px;font-weight:400;color:var(--t3);margin-left:4px;">Hospital bills, receipts, photos</span></div>
+      <div class="upload-zone" id="proofZone"><input type="file" accept="image/*" multiple onchange="handleProofFiles(event)"/><div class="uz-ic"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#00DFA8" stroke-width="2" stroke-linecap="round"><polyline points="16 16 12 12 8 16"/><line x1="12" y1="12" x2="12" y2="21"/><path d="M20.39 18.39A5 5 0 0 0 18 9h-1.26A8 8 0 1 0 3 16.3"/></svg></div><div class="uz-txt">Click or drag here</div><div class="uz-sub">JPG, PNG · Max 5MB each</div></div>
+      <div class="preview-grid" id="proofGrid"></div>
+    </div>
+    <div class="create-section au2">
+      <div class="cs-ttl"><div class="cs-ttl-ic" style="background:rgba(245,166,35,.1)"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#F5A623" stroke-width="2" stroke-linecap="round"><rect x="1" y="4" width="22" height="16" rx="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg></div>Payment Details</div>
+      <div class="payment-tabs" id="payTabs">
+        <button class="ptab on" onclick="setPayTab(this,'bank')">Bank Transfer</button>
+        <button class="ptab" onclick="setPayTab(this,'easypaisa')">Easypaisa</button>
+        <button class="ptab" onclick="setPayTab(this,'jazzcash')">JazzCash</button>
+      </div>
+      <div class="form-row">
+        <div class="form-group"><label class="form-lbl" id="payNumLbl">Account Number</label><input class="form-input" id="c-paynum" type="text" placeholder="PK36SCBL0000001123456702"/></div>
+        <div class="form-group"><label class="form-lbl">Account / Holder Name</label><input class="form-input" id="c-payname" type="text" placeholder="Ahmed Usman"/></div>
+      </div>
+      <div class="form-group" id="bankNameGroup"><label class="form-lbl">Bank Name</label><input class="form-input" id="c-bankname" type="text" placeholder="HBL / MCB / UBL / Meezan etc."/></div>
+
+      <!-- Second Payment Method (Optional) -->
+      <div class="pay2-toggle"></div>
+      <div class="pay2-header">
+        <div style="display:flex;align-items:center;">
+          <span class="pay2-lbl">Second Payment Method</span>
+          <span class="pay2-badge">Optional</span>
+        </div>
+        <button type="button" id="addPay2Btn" class="add-pay2-btn" onclick="toggleSecondPayment()">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+          Add Second Method
+        </button>
+      </div>
+      <div id="secondPaySection" style="display:none;">
+        <div class="payment-tabs" id="payTabs2">
+          <button class="ptab on" onclick="setPayTab2(this,'bank')">Bank Transfer</button>
+          <button class="ptab" onclick="setPayTab2(this,'easypaisa')">Easypaisa</button>
+          <button class="ptab" onclick="setPayTab2(this,'jazzcash')">JazzCash</button>
+        </div>
+        <div class="form-row">
+          <div class="form-group"><label class="form-lbl" id="payNumLbl2">Account Number</label><input class="form-input" id="c-paynum2" type="text" placeholder="PK36SCBL0000001123456702"/></div>
+          <div class="form-group"><label class="form-lbl">Account / Holder Name</label><input class="form-input" id="c-payname2" type="text" placeholder="Ahmed Usman"/></div>
+        </div>
+        <div class="form-group" id="bankNameGroup2"><label class="form-lbl">Bank Name</label><input class="form-input" id="c-bankname2" type="text" placeholder="HBL / MCB / UBL / Meezan etc."/></div>
+        <button type="button" class="remove-pay2-btn" onclick="removeSecondPayment()">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+          Remove Second Method
+        </button>
+      </div>
+    </div>
+    <div class="form-err" id="create-err" style="margin-bottom:12px;"></div>
+    <button class="create-submit" id="create-btn" onclick="createCampaign()"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>Publish Campaign & Get Link</button>
+  </div>
+</div>
+
+<!-- ═══ PUBLIC CAMPAIGN PAGE ═══ -->
+<div class="page" id="page-campaign">
+  <div class="pub-page">
+    <div class="pub-hero">
+      <!-- Campaign closed banner (shown only when expired) -->
+      <div id="camp-closed-banner" style="display:none;max-width:1200px;margin:0 auto 0;">
+        <div class="camp-closed-banner">
+          <div class="ccb-ic"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--red)" stroke-width="2.5" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg></div>
+          <div><div class="ccb-ttl">Campaign Closed</div><div class="ccb-sub">The deadline for this campaign has passed. Donations are no longer being accepted.</div></div>
+        </div>
+      </div>
+      <div class="pub-top">
+        <div class="pub-left">
+          <div class="pub-tags"><span class="pub-tag pt-verified"><svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg>Verified Campaign</span><span class="pub-tag pt-cat" id="pub-exp-tag">Campaign</span></div>
+          <h1 class="pub-title" id="pub-title">Loading...</h1>
+          <div class="pub-organizer"><div class="pub-org-av" id="pub-av">?</div><div><div class="pub-org-nm" id="pub-org">Organizer</div><div class="pub-org-phone" id="pub-phone"></div></div></div>
+          <p class="pub-description" id="pub-desc">Loading...</p>
+          <div class="pub-proof-ttl">Proof Documents &amp; Images</div>
+          <div class="pub-proof-grid" id="pub-proofs"></div>
+        </div>
+        <div class="pub-sidebar">
+          <div class="donate-card">
+            <div class="dc-raised-row"><div class="dc-raised-num"><span class="dc-raised-pfx">PKR</span><span id="pub-raised">0</span></div><div class="dc-goal">of PKR <span id="pub-target">0</span></div></div>
+            <div class="dc-pbar-track"><div class="dc-pbar-fill" id="pub-pbar" style="width:0%"></div></div>
+            <div class="dc-pbar-pct" id="pub-pct">0% funded</div>
+            <div class="dc-divider"></div>
+            <div class="dc-bank-lbl">Transfer to this account</div>
+            <div id="pub-payment"></div>
+            <button class="dc-donate-btn" id="pub-donate-btn" onclick="openDonateModal()"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>I Have Donated — Submit Proof</button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="pub-donors-section">
+      <div class="dc"><div class="dc-hd"><div class="dc-ttl">Donation Ledger</div><div id="pub-donor-ct" style="font-family:var(--fb);font-size:12px;color:var(--t3);"></div></div><div id="pub-donors"></div></div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ VERIFY EMAIL ═══ -->
+<div class="page" id="page-verify-email">
+  <div class="verify-wrap">
+    <div class="verify-glow"></div>
+    <div class="verify-box au">
+      <!-- Mail envelope icon -->
+      <div class="verify-icon-wrap">
+        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#00DFA8" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/>
+          <polyline points="22,6 12,13 2,6"/>
+        </svg>
+      </div>
+      <div class="verify-ttl">Check Your Email</div>
+      <div class="verify-sub">We've sent a verification link to:</div>
+      <div class="verify-email-chip"><div class="vec-dot"></div><span class="vec-txt" id="verify-email-display">your email</span></div>
+
+      <!-- Step-by-step instructions -->
+      <div class="verify-steps">
+        <div class="vs-item"><div class="vs-num">1</div><div class="vs-txt">Open your email inbox (check Spam/Junk too)</div></div>
+        <div class="vs-item"><div class="vs-num">2</div><div class="vs-txt">Find the email from <strong style="color:var(--t1);">Amanat</strong> and click <strong style="color:var(--ac);">Confirm your mail</strong></div></div>
+        <div class="vs-item"><div class="vs-num">3</div><div class="vs-txt">Come back here and click the button below</div></div>
+      </div>
+
+      <!-- Rate limit warning -->
+      <div class="verify-warn" id="verify-rate-warn" style="display:none;font-family:var(--fb);font-size:12.5px;color:var(--amb);padding:12px 15px;background:rgba(245,166,35,.06);border:1px solid rgba(245,166,35,.18);border-radius:8px;margin-bottom:14px;line-height:1.6;text-align:left;">
+        <strong style="display:block;margin-bottom:4px;">⚠️ Email sending limit reached</strong>
+        Your account was created successfully but the verification email could not be sent right now — Supabase free tier allows only a few emails per hour.<br><br>
+        Please wait <strong>5–10 minutes</strong>, then click <strong>"Resend Email"</strong> below to try again.
+      </div>
+      <!-- Status messages -->
+      <div class="verify-err" id="verify-err"></div>
+      <div class="verify-ok" id="verify-ok"></div>
+
+      <!-- CTA: I've verified -->
+      <button class="verify-done-btn" id="verify-done-btn" onclick="checkEmailVerified()">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg>
+        I've Verified My Email
+      </button>
+
+      <!-- Resend email -->
+      <button class="verify-resend-btn" id="verify-resend-btn" onclick="resendVerificationEmail()">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 .49-3.5"/></svg>
+        <span id="resend-countdown">Resend Email</span>
+      </button>
+
+      <div class="verify-footer">
+        Wrong email? <span onclick="goBackToSignup()">Go back and sign up again</span>
+        &nbsp;·&nbsp;
+        Already verified? <span onclick="showPage('login')">Log in</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ BROWSE CAMPAIGNS ═══ -->
+<div class="page" id="page-browse">
+  <div style="padding-top:62px;">
+    <div class="browse-wrap">
+      <div class="browse-hd au">
+        <div class="browse-ttl">Browse Campaigns</div>
+        <div class="browse-sub">Discover campaigns from organizers across Pakistan. Every campaign is transparent and accountable.</div>
+        <div class="browse-search-wrap">
+          <svg class="browse-search-ic" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--t3)" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+          <input class="browse-search" type="text" id="browse-search-input" placeholder="Search by campaign title or organizer..." oninput="browseCampaignSearch(this.value)"/>
+        </div>
+        <div class="browse-count" id="browse-count"></div>
+      </div>
+      <div class="browse-grid" id="browse-grid">
+        <div style="grid-column:1/-1;text-align:center;padding:64px;"><div class="spin-sm light" style="margin:0 auto;"></div></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- DONATE MODAL -->
+<div class="modal-bg" id="donateModal">
+  <div class="modal-box">
+    <button class="modal-close" onclick="closeDonateModal()">✕</button>
+    <div id="donate-form">
+      <div class="modal-ttl">Submit Donation Proof</div>
+      <div class="modal-sub">Already transferred the funds? Upload your screenshot — the organizer will verify it and add it to the public ledger.</div>
+      <div class="form-group"><label class="form-lbl">Your Name (optional)</label><input class="form-input" id="d-name" type="text" placeholder="Muhammad Ali (or leave blank to stay anonymous)"/></div>
+      <div class="form-group"><label class="form-lbl">Phone Number *</label><input class="form-input" id="d-phone" type="tel" placeholder="03001234567"/></div>
+      <div class="form-group"><label class="form-lbl">Amount Sent (PKR) *</label><input class="form-input" id="d-amount" type="number" placeholder="5000"/></div>
+      <div class="form-group">
+        <label class="form-lbl">Transaction Screenshot *</label>
+        <img class="ua-preview" id="ss-preview" alt="preview"/>
+        <div class="upload-area" id="ssUploadArea"><input type="file" accept="image/*" onchange="handleScreenshot(event)"/><div class="ua-ic"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#00DFA8" stroke-width="2" stroke-linecap="round"><polyline points="16 16 12 12 8 16"/><line x1="12" y1="12" x2="12" y2="21"/><path d="M20.39 18.39A5 5 0 0 0 18 9h-1.26A8 8 0 1 0 3 16.3"/></svg></div><div class="ua-txt">Easypaisa / JazzCash / Bank transfer screenshot</div><div class="ua-sub">Upload JPG or PNG</div></div>
+      </div>
+      <div class="form-err" id="donate-err"></div>
+      <button class="modal-submit" id="donate-submit-btn" onclick="submitDonation()"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>Submit for Verification</button>
+    </div>
+    <div class="success-state" id="donate-success">
+      <div class="success-ic"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#00DFA8" stroke-width="2.5" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg></div>
+      <div class="success-ttl">Thank you so much!</div>
+      <div class="success-sub">Your donation has been submitted. The organizer will verify your screenshot and add it to the public ledger.</div>
+      <button class="form-btn" style="max-width:200px;margin:24px auto 0;display:block;" onclick="closeDonateModal()">Done</button>
+    </div>
+  </div>
+</div>
+
+<!-- LIGHTBOX -->
+<div class="lightbox" id="lightbox" onclick="closeLightbox()">
+  <button class="lightbox-close" onclick="closeLightbox()">✕</button>
+  <img id="lbImg" src="" alt=""/>
+</div>
+
+<!-- TOAST -->
+<div id="toast"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg><span id="toast-msg"></span></div>
+
+<script>
+/* ════════════════════════════════════════════
+   SUPABASE CONFIG — ADD YOUR KEYS HERE
+════════════════════════════════════════════ */
+const SUPABASE_URL = 'https://mbphtrcdqrfbwehgkyvl.supabase.co';
+const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im1icGh0cmNkcXJmYndlaGdreXZsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQwMzE5ODAsImV4cCI6MjA4OTYwNzk4MH0.H6oYD1338TYcyqg7UjhI69YPvkfCmj6g0EpBdw6EQVA';
+/* ══════════════════════════════════════════ */
+
+const { createClient } = supabase;
+const db = createClient(SUPABASE_URL, SUPABASE_KEY);
+
+/* ── STATE ── */
+let currentUser = null;
+let currentCampaignId = null;
+let proofFiles = [];
+let screenshotFile = null;
+let currentPayMethod = 'bank';
+let _pendingSignupEmail = '';
+let _pendingSignupName = '';
+let _resendTimer = null;
+let _emailJustVerified = false; // true when user lands via email verify link
+
+/* ── EMAIL VERIFICATION ── */
+function showVerifyEmailPage(email, rateLimited) {
+  document.getElementById('verify-email-display').textContent = email || 'your email';
+  document.getElementById('verify-err').style.display = 'none';
+  document.getElementById('verify-ok').style.display = 'none';
+  // Show or hide rate limit warning
+  const warnEl = document.getElementById('verify-rate-warn');
+  if (warnEl) warnEl.style.display = rateLimited ? 'block' : 'none';
+  // Update subtitle text
+  const subEl = document.querySelector('#page-verify-email .verify-sub');
+  if (subEl) subEl.textContent = rateLimited
+    ? 'Your account is ready. Once you receive the email, click the link inside:'
+    : "We've sent a verification link to:";
+  // Reset the "I've Verified" button
+  const doneBtn = document.getElementById('verify-done-btn');
+  doneBtn.disabled = false;
+  doneBtn.innerHTML = '<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg> I\'ve Verified My Email';
+  // If rate limited, don\'t start cooldown so resend is immediately available after a minute
+  startResendCooldown(rateLimited ? 5 : 60);
+  showPage('verify-email');
+}
+
+function startResendCooldown(seconds) {
+  const btn = document.getElementById('verify-resend-btn');
+  const label = document.getElementById('resend-countdown');
+  if (_resendTimer) clearInterval(_resendTimer);
+  let remaining = seconds;
+  btn.disabled = true;
+  label.textContent = `Resend Email (${remaining}s)`;
+  _resendTimer = setInterval(() => {
+    remaining--;
+    if (remaining <= 0) {
+      clearInterval(_resendTimer);
+      _resendTimer = null;
+      btn.disabled = false;
+      label.textContent = 'Resend Email';
+    } else {
+      label.textContent = `Resend Email (${remaining}s)`;
+    }
+  }, 1000);
+}
+
+async function resendVerificationEmail() {
+  const email = _pendingSignupEmail;
+  if (!email) return;
+  const okEl = document.getElementById('verify-ok');
+  const errEl = document.getElementById('verify-err');
+  const warnEl = document.getElementById('verify-rate-warn');
+  errEl.style.display = 'none';
+  okEl.style.display = 'none';
+  const { error } = await db.auth.resend({ type: 'signup', email });
+  if (error) {
+    const msg = (error.message || '').toLowerCase();
+    if (msg.includes('rate limit') || msg.includes('over_email_send_rate_limit') || msg.includes('too many')) {
+      // Show rate limit warning, keep resend available after 5 min
+      if (warnEl) { warnEl.style.display = 'block'; }
+      errEl.textContent = 'Email rate limit still active. Please wait 5–10 minutes and try resending again.';
+      errEl.style.display = 'block';
+      startResendCooldown(300); // 5 min cooldown when rate limited
+    } else {
+      errEl.textContent = 'Could not resend email: ' + error.message;
+      errEl.style.display = 'block';
+    }
+  } else {
+    if (warnEl) warnEl.style.display = 'none';
+    okEl.textContent = '✓ Verification email sent! Check your inbox (and Spam/Junk folder).';
+    okEl.style.display = 'block';
+    startResendCooldown(60);
+  }
+}
+
+async function checkEmailVerified() {
+  const btn = document.getElementById('verify-done-btn');
+  const errEl = document.getElementById('verify-err');
+  const okEl = document.getElementById('verify-ok');
+  btn.disabled = true;
+  btn.innerHTML = '<div class="spin-sm"></div> Checking...';
+  errEl.style.display = 'none';
+  okEl.style.display = 'none';
+
+  // First try getSession (works if Supabase already set session from hash)
+  let user = null;
+  try {
+    const { data: s1 } = await db.auth.getSession();
+    if (s1?.session?.user?.email_confirmed_at) {
+      user = s1.session.user;
+    }
+  } catch(e) {}
+
+  // Fallback: refreshSession
+  if (!user) {
+    try {
+      const { data: s2 } = await db.auth.refreshSession();
+      if (s2?.user?.email_confirmed_at) {
+        user = s2.user;
+      }
+    } catch(e) {}
+  }
+
+  btn.disabled = false;
+  btn.innerHTML = '<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg> I\'ve Verified My Email';
+
+  if (!user) {
+    errEl.textContent = 'Email not verified yet. Please click the link we sent you, then try again.';
+    errEl.style.display = 'block';
+    return;
+  }
+
+  // ✓ Verified!
+  if (_resendTimer) clearInterval(_resendTimer);
+  currentUser = user;
+  await loadUserProfile();
+  showPage('dashboard');
+  await refreshDashboard();
+  showToast('Email verified! Welcome, ' + (_pendingSignupName.split(' ')[0] || 'there') + ' 🎉', 'success');
+  _pendingSignupEmail = '';
+  _pendingSignupName = '';
+}
+
+function goBackToSignup() {
+  if (_resendTimer) clearInterval(_resendTimer);
+  _pendingSignupEmail = '';
+  _pendingSignupName = '';
+  currentUser = null;
+  // Sign out the unverified session
+  db.auth.signOut();
+  showPage('signup');
+}
+
+/* ── INIT ── */
+window.addEventListener('DOMContentLoaded', async () => {
+
+  // ── Detect Supabase email-verify redirect (hash contains access_token + type=signup)
+  const hashParams = new URLSearchParams(window.location.hash.replace(/^#/, ''));
+  const isEmailVerifyRedirect = hashParams.get('type') === 'signup' && !!hashParams.get('access_token');
+  if (isEmailVerifyRedirect) {
+    _emailJustVerified = true;
+    // Remove the ugly token hash from the address bar immediately
+    history.replaceState(null, '', window.location.pathname + window.location.search);
+  }
+
+  // ── Register auth state listener BEFORE getSession so we catch the hash-token sign-in
+  db.auth.onAuthStateChange(async (event, session) => {
+    if (event === 'SIGNED_IN' && session) {
+      currentUser = session.user;
+      // Coming from email verification link
+      if (_emailJustVerified) {
+        _emailJustVerified = false;
+        if (_resendTimer) clearInterval(_resendTimer);
+        const firstName = session.user.user_metadata?.full_name?.split(' ')[0] || 'there';
+        _pendingSignupEmail = '';
+        _pendingSignupName = '';
+        document.getElementById('globalLoader').classList.add('hidden');
+        await loadUserProfile();
+        showPage('dashboard');
+        await refreshDashboard();
+        showToast('Email verified! Welcome, ' + firstName + ' 🎉', 'success');
+      }
+    } else if (event === 'SIGNED_OUT') {
+      currentUser = null;
+    }
+  });
+
+  try {
+    const { data: { session } } = await db.auth.getSession();
+    if (session) {
+      currentUser = session.user;
+      await loadUserProfile();
+    }
+    document.getElementById('globalLoader').classList.add('hidden');
+
+    // If this was an email-verify redirect, onAuthStateChange above already handled navigation
+    if (isEmailVerifyRedirect) return;
+
+    // Check URL for campaign ID (e.g. ?c=campaign-id)
+    const params = new URLSearchParams(window.location.search);
+    const cid = params.get('c');
+    if (cid) {
+      await loadPublicCampaign(cid);
+    } else if (currentUser) {
+      showPage('dashboard');
+      await refreshDashboard();
+    }
+  } catch(e) {
+    document.getElementById('globalLoader').classList.add('hidden');
+  }
+
+  // Set default deadline
+  const el = document.getElementById('c-date');
+  if (el) el.value = new Date(Date.now() + 30*24*60*60*1000).toISOString().split('T')[0];
+});
+
+/* ── ROUTING ── */
+function showPage(p) {
+  document.querySelectorAll('.page').forEach(x => x.classList.remove('active'));
+  document.getElementById('page-' + p).classList.add('active');
+  window.scrollTo(0, 0);
+  updateNav(p);
+  if (p === 'browse') loadBrowsePage();
+}
+
+function updateNav(p) {
+  const nr = document.getElementById('navRight');
+  if (currentUser && ['dashboard','create'].includes(p)) {
+    const name = currentUser.user_metadata?.full_name || 'User';
+    nr.innerHTML = `<span style="font-family:var(--fb);font-size:13px;color:var(--t2);">Hi, ${name.split(' ')[0]}</span><button class="btn-red" onclick="doLogout()">Logout</button>`;
+  } else if (p === 'campaign') {
+    nr.innerHTML = `<button class="btn-o" onclick="showPage('browse')">Browse Campaigns</button><button class="btn-o" onclick="showPage('login')">Organizer Login</button><button class="btn-f" onclick="showPage('signup')">Start a Campaign</button>`;
+  } else if (p === 'verify-email') {
+    nr.innerHTML = `<button class="btn-o" onclick="showPage('login')">Log In</button>`;
+  } else if (p === 'browse') {
+    nr.innerHTML = `<button class="btn-o" onclick="showPage('login')">Log In</button><button class="btn-f" onclick="showPage('signup')">Start a Campaign →</button>`;
+  } else {
+    nr.innerHTML = `<button class="btn-o" onclick="showPage('browse')">Browse Campaigns</button><button class="btn-o" onclick="showPage('login')">Log In</button><button class="btn-f" onclick="showPage('signup')">Start a Campaign →</button>`;
+  }
+}
+
+function goHome() { showPage('home'); }
+
+/* ── AUTH ── */
+async function doLogin() {
+  const email = document.getElementById('login-email').value.trim();
+  const pass = document.getElementById('login-password').value;
+  const err = document.getElementById('login-err');
+  const btn = document.getElementById('login-btn');
+  if (!email || !pass) { showErr(err, 'Please enter your email and password'); return; }
+  btn.disabled = true;
+  btn.innerHTML = '<div class="spin-sm"></div> Logging in...';
+  const { data, error } = await db.auth.signInWithPassword({ email, password: pass });
+  btn.disabled = false;
+  btn.innerHTML = 'Log In →';
+  if (error) { showErr(err, 'Incorrect email or password'); return; }
+  // Block login if email is not verified yet
+  if (!data.user.email_confirmed_at) {
+    err.style.display = 'none';
+    _pendingSignupEmail = data.user.email;
+    _pendingSignupName = data.user.user_metadata?.full_name || '';
+    currentUser = data.user;
+    showVerifyEmailPage(data.user.email, false);
+    showToast('Please verify your email first', '');
+    return;
+  }
+  err.style.display = 'none';
+  currentUser = data.user;
+  await loadUserProfile();
+  showPage('dashboard');
+  await refreshDashboard();
+  showToast('Welcome back!', 'success');
+}
+
+async function doSignup() {
+  const name = document.getElementById('su-name').value.trim();
+  const phone = document.getElementById('su-phone').value.trim();
+  const email = document.getElementById('su-email').value.trim();
+  const pass = document.getElementById('su-password').value;
+  const err = document.getElementById('signup-err');
+  const btn = document.getElementById('signup-btn');
+  if (!name || !email || !phone || !pass) { showErr(err, 'Please fill in all fields'); return; }
+  if (pass.length < 6) { showErr(err, 'Password must be at least 6 characters'); return; }
+  btn.disabled = true;
+  btn.innerHTML = '<div class="spin-sm"></div> Creating account...';
+  const { data, error } = await db.auth.signUp({
+    email, password: pass,
+    options: { data: { full_name: name, phone } }
+  });
+  btn.disabled = false;
+  btn.innerHTML = 'Create Account →';
+  if (error) {
+    const msg = (error.message || '').toLowerCase();
+    // Already exists
+    if (msg.includes('already registered') || msg.includes('already exists') || msg.includes('email address is already')) {
+      err.innerHTML = 'An account with this email already exists. <span style="color:var(--ac);cursor:pointer;font-weight:600;text-decoration:underline;" onclick="showPage(\'login\')">Log in instead →</span>';
+      err.style.display = 'block';
+      return;
+    }
+    // Email rate limit — account may still have been created, email just not sent
+    if (msg.includes('rate limit') || msg.includes('over_email_send_rate_limit') || msg.includes('too many') || msg.includes('email sending')) {
+      err.style.display = 'none';
+      _pendingSignupEmail = email;
+      _pendingSignupName = name;
+      if (data && data.user) currentUser = data.user;
+      showVerifyEmailPage(email, true);
+      return;
+    }
+    showErr(err, error.message);
+    return;
+  }
+  err.style.display = 'none';
+  _pendingSignupEmail = email;
+  _pendingSignupName = name;
+  currentUser = data.user;
+  showVerifyEmailPage(email, false);
+}
+
+async function doLogout() {
+  await db.auth.signOut();
+  currentUser = null;
+  showPage('home');
+  showToast('Logged out', '');
+}
+
+async function loadUserProfile() {
+  if (!currentUser) return;
+  const name = currentUser.user_metadata?.full_name || currentUser.email || 'User';
+  const initials = name.split(' ').map(w => w[0]).join('').toUpperCase().slice(0,2);
+  document.getElementById('sbAv').textContent = initials;
+  document.getElementById('sbNm').textContent = name;
+}
+
+/* ── DASHBOARD ── */
+async function refreshDashboard() {
+  if (!currentUser) return;
+  const { data: camps } = await db.from('campaigns').select('*').eq('user_id', currentUser.id).order('created_at', { ascending: false });
+  const campaigns = camps || [];
+  // Get all donations for my campaigns
+  const campIds = campaigns.map(c => c.id);
+  let donations = [];
+  if (campIds.length) {
+    const { data: dons } = await db.from('donations').select('*').in('campaign_id', campIds).order('created_at', { ascending: false });
+    donations = dons || [];
+  }
+  const verified = donations.filter(d => d.status === 'verified');
+  const pending = donations.filter(d => d.status === 'pending');
+  const totalRaised = verified.reduce((s,d) => s + d.amount, 0);
+  document.getElementById('kpi-raised').innerHTML = `<span class="kpi-pfx">PKR</span>${totalRaised.toLocaleString('en-PK')}`;
+  document.getElementById('kpi-total').textContent = donations.length;
+  document.getElementById('kpi-pend').textContent = pending.length;
+  const badge = document.getElementById('pendingBadge');
+  badge.textContent = pending.length;
+  badge.style.display = pending.length > 0 ? 'inline' : 'none';
+  renderOverviewCamps(campaigns, donations);
+  renderOverviewPending(pending, campaigns);
+  // Check milestone notifications
+  checkMilestones(campaigns, donations);
+}
+
+/* ── MILESTONE NOTIFICATIONS ── */
+function checkMilestones(campaigns, donations) {
+  const stored = localStorage.getItem('amanat_milestones');
+  const shown = stored ? JSON.parse(stored) : {};
+  const newShown = Object.assign({}, shown);
+  const banners = [];
+
+  campaigns.forEach(c => {
+    if (!c.target) return;
+    const raised = donations.filter(d => d.campaign_id === c.id && d.status === 'verified').reduce((s, d) => s + d.amount, 0);
+    const pct = Math.round((raised / c.target) * 100);
+    const key100 = c.id + '_100';
+    const key50 = c.id + '_50';
+
+    if (pct >= 100 && !shown[key100]) {
+      banners.push({ key: key100, type: 'mb-100', msg: '🎉 Alhamdulillah! "' + c.title + '" is fully funded!' });
+      newShown[key100] = true;
+    } else if (pct >= 50 && !shown[key50]) {
+      banners.push({ key: key50, type: 'mb-50', msg: '✨ Congratulations! "' + c.title + '" has reached 50% of its goal!' });
+      newShown[key50] = true;
+    }
+  });
+
+  localStorage.setItem('amanat_milestones', JSON.stringify(newShown));
+  const container = document.getElementById('milestone-banners');
+  if (container) {
+    container.innerHTML = banners.map(b =>
+      '<div class="milestone-banner ' + b.type + '" id="mb-' + b.key + '">' +
+      '<span class="mb-txt">' + b.msg + '</span>' +
+      '<button class="mb-close" onclick="document.getElementById(\'mb-' + b.key + '\').remove()">✕</button>' +
+      '</div>'
+    ).join('');
+  }
+}
+
+function dashTab(el, tab) {
+  document.querySelectorAll('.dni').forEach(n => n.classList.remove('on'));
+  if (el) el.classList.add('on');
+  ['overview','campaigns','verify'].forEach(t => document.getElementById('tab-' + t).style.display = t === tab ? 'block' : 'none');
+  const titles = { overview: 'Overview', campaigns: 'My Campaigns', verify: 'Verify Donations' };
+  document.getElementById('dashTabTtl').textContent = titles[tab];
+  document.getElementById('dashTabSub').textContent = 'Manage your campaigns and donations';
+  if (tab === 'campaigns') loadCampaignsTab();
+  if (tab === 'verify') loadVerifyTab();
+}
+
+function renderOverviewCamps(campaigns, donations) {
+  const el = document.getElementById('ov-camps');
+  if (!campaigns.length) {
+    el.innerHTML = emptyState('No campaigns yet', 'Create your first campaign.', 'create', '+ New Campaign');
+    return;
+  }
+  el.innerHTML = campaigns.slice(0,4).map(c => {
+    const raised = donations.filter(d => d.campaign_id === c.id && d.status === 'verified').reduce((s,d) => s+d.amount, 0);
+    const pct = c.target ? Math.min(Math.round((raised/c.target)*100), 100) : 0;
+    const donCt = donations.filter(d => d.campaign_id === c.id).length;
+    return campCardHTML(c, raised, pct, donCt);
+  }).join('');
+}
+
+function renderOverviewPending(pending, campaigns) {
+  const el = document.getElementById('ov-pend');
+  if (!pending.length) {
+    el.innerHTML = `<div class="empty-state" style="padding:32px 16px;"><div class="empty-ic"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="var(--t3)" stroke-width="2" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg></div><div class="empty-ttl" style="font-size:15px;">All clear!</div><div class="empty-sub">No pending donations.</div></div>`;
+    return;
+  }
+  el.innerHTML = pending.slice(0,3).map(d => {
+    const camp = campaigns.find(c => c.id === d.campaign_id);
+    return donCardHTML(d, camp?.title || '');
+  }).join('');
+}
+
+async function loadCampaignsTab() {
+  const el = document.getElementById('camps-full');
+  el.innerHTML = '<div style="padding:32px;text-align:center;"><div class="spin-sm light" style="margin:0 auto;"></div></div>';
+  const { data: camps } = await db.from('campaigns').select('*').eq('user_id', currentUser.id).order('created_at', { ascending: false });
+  const campaigns = camps || [];
+  if (!campaigns.length) {
+    el.innerHTML = emptyState('No campaigns yet', 'Create your first campaign.', 'create', '+ New Campaign');
+    return;
+  }
+  const campIds = campaigns.map(c => c.id);
+  const { data: dons } = await db.from('donations').select('*').in('campaign_id', campIds);
+  const donations = dons || [];
+  el.innerHTML = `<div class="dc"><div class="dc-hd"><div class="dc-ttl">All Campaigns (${campaigns.length})</div><button class="btn-f" onclick="showPage('create')" style="padding:7px 16px;font-size:12.5px;">+ New</button></div>${campaigns.map(c => {
+    const raised = donations.filter(d => d.campaign_id === c.id && d.status === 'verified').reduce((s,d)=>s+d.amount,0);
+    const pct = c.target ? Math.min(Math.round((raised/c.target)*100), 100) : 0;
+    const donCt = donations.filter(d => d.campaign_id === c.id).length;
+    return campCardHTML(c, raised, pct, donCt);
+  }).join('')}</div>`;
+}
+
+async function loadVerifyTab() {
+  const el = document.getElementById('verify-list');
+  el.innerHTML = '<div style="padding:32px;text-align:center;"><div class="spin-sm light" style="margin:0 auto;"></div></div>';
+  const { data: camps } = await db.from('campaigns').select('id,title').eq('user_id', currentUser.id);
+  const campIds = (camps||[]).map(c=>c.id);
+  if (!campIds.length) { el.innerHTML = emptyState('No campaigns yet', 'Create a campaign first.', 'create', '+ New Campaign'); return; }
+  const { data: pending } = await db.from('donations').select('*').in('campaign_id', campIds).eq('status', 'pending').order('created_at', { ascending: false });
+  const pends = pending || [];
+  if (!pends.length) {
+    el.innerHTML = `<div class="empty-state"><div class="empty-ic"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="var(--t3)" stroke-width="2" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg></div><div class="empty-ttl">All verified!</div><div class="empty-sub">No pending donations right now.</div></div>`;
+    return;
+  }
+  el.innerHTML = `<div class="dc"><div class="dc-hd"><div class="dc-ttl">Pending Verification (${pends.length})</div></div>${pends.map(d => {
+    const camp = (camps||[]).find(c => c.id === d.campaign_id);
+    return donCardHTML(d, camp?.title || '');
+  }).join('')}</div>`;
+}
+
+function campCardHTML(c, raised, pct, donCt) {
+  // Feature 4: Check expiry
+  const isExpired = c.deadline && new Date(c.deadline) < new Date();
+  const statusBadge = isExpired
+    ? `<span class="cc-status-exp">● Expired</span>`
+    : `<span class="cc-status">● Live</span>`;
+  return `<div class="camp-card">
+    <div class="cc-head"><div class="cc-title">${c.title}</div>${statusBadge}</div>
+    <div class="cc-pb-lbl"><span class="cc-pb-raised">PKR ${raised.toLocaleString('en-PK')} raised</span><span class="cc-pb-pct">${pct}%</span></div>
+    <div class="cc-pb-track"><div class="cc-pb-fill" style="width:${pct}%"></div></div>
+    <div class="cc-foot">
+      <span class="cc-foot-meta">${donCt} donation${donCt!==1?'s':''} · Goal: PKR ${(c.target||0).toLocaleString('en-PK')}</span>
+      <button class="cc-link-btn" onclick="copyCampLink('${c.id}',event)">
+        <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>
+        Share Link
+      </button>
+    </div>
+  </div>`;
+}
+
+function donCardHTML(d, campTitle) {
+  const ssHtml = d.screenshot_url
+    ? `<img src="${d.screenshot_url}" class="dvc-screenshot" onclick="openLightbox('${d.screenshot_url}')" loading="lazy"/>`
+    : `<div class="dvc-no-ss"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--t3)" stroke-width="2" stroke-linecap="round"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg><span style="font-family:var(--fb);font-size:12px;color:var(--t3);">No screenshot</span></div>`;
+  return `<div class="dvc" id="dv-${d.id}">
+    <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:6px;">
+      <div><div class="dvc-name">${d.donor_name||'Anonymous'}</div><div class="dvc-meta">${d.phone||'No phone'} · ${campTitle}</div></div>
+      <div class="dvc-amt">PKR ${(d.amount||0).toLocaleString('en-PK')}</div>
+    </div>
+    ${ssHtml}
+    <div class="dvc-actions">
+      <button class="dvc-v" onclick="verifyDon('${d.id}',true)">✓ Verify — Received</button>
+      <button class="dvc-r" onclick="verifyDon('${d.id}',false)">✕ Reject</button>
+    </div>
+  </div>`;
+}
+
+async function verifyDon(id, approve) {
+  const btns = document.querySelectorAll(`#dv-${id} button`);
+  btns.forEach(b => b.disabled = true);
+  const { error } = await db.from('donations').update({ status: approve ? 'verified' : 'rejected' }).eq('id', id);
+  if (error) { btns.forEach(b => b.disabled = false); showToast('Error: ' + error.message, 'error'); return; }
+  const el = document.getElementById('dv-' + id);
+  if (el) { el.style.opacity = '0'; setTimeout(() => el.remove(), 300); }
+  showToast(approve ? '✓ Donation verified!' : 'Donation rejected', approve ? 'success' : '');
+  await refreshDashboard();
+}
+
+/* ── CREATE CAMPAIGN ── */
+let currentPayMethodC = 'bank';
+let currentPayMethodC2 = 'bank';
+let secondPayActive = false;
+
+function setPayTab(el, method) {
+  document.querySelectorAll('#payTabs .ptab').forEach(t => t.classList.remove('on'));
+  el.classList.add('on');
+  currentPayMethodC = method;
+  const labels = { bank: 'Account Number', easypaisa: 'Easypaisa Number', jazzcash: 'JazzCash Number' };
+  const placeholders = { bank: 'PK36SCBL0000001123456702', easypaisa: '03001234567', jazzcash: '03001234567' };
+  document.getElementById('payNumLbl').textContent = labels[method];
+  document.getElementById('c-paynum').placeholder = placeholders[method];
+  document.getElementById('bankNameGroup').style.display = method === 'bank' ? 'block' : 'none';
+}
+
+function setPayTab2(el, method) {
+  document.querySelectorAll('#payTabs2 .ptab').forEach(t => t.classList.remove('on'));
+  el.classList.add('on');
+  currentPayMethodC2 = method;
+  const labels = { bank: 'Account Number', easypaisa: 'Easypaisa Number', jazzcash: 'JazzCash Number' };
+  const placeholders = { bank: 'PK36SCBL0000001123456702', easypaisa: '03001234567', jazzcash: '03001234567' };
+  document.getElementById('payNumLbl2').textContent = labels[method];
+  document.getElementById('c-paynum2').placeholder = placeholders[method];
+  document.getElementById('bankNameGroup2').style.display = method === 'bank' ? 'block' : 'none';
+}
+
+function toggleSecondPayment() {
+  secondPayActive = true;
+  document.getElementById('secondPaySection').style.display = 'block';
+  document.getElementById('addPay2Btn').style.display = 'none';
+}
+
+function removeSecondPayment() {
+  secondPayActive = false;
+  document.getElementById('secondPaySection').style.display = 'none';
+  document.getElementById('addPay2Btn').style.display = 'inline-flex';
+  ['c-paynum2','c-payname2','c-bankname2'].forEach(id => document.getElementById(id).value = '');
+}
+
+function handleProofFiles(e) {
+  const files = Array.from(e.target.files);
+  files.forEach(file => {
+    proofFiles.push(file);
+    const reader = new FileReader();
+    reader.onload = ev => {
+      const img = document.createElement('img');
+      img.src = ev.target.result;
+      img.className = 'preview-img';
+      img.onclick = () => openLightbox(ev.target.result);
+      document.getElementById('proofGrid').appendChild(img);
+    };
+    reader.readAsDataURL(file);
+  });
+}
+
+async function createCampaign() {
+  const title = document.getElementById('c-title').value.trim();
+  const desc = document.getElementById('c-desc').value.trim();
+  const target = parseInt(document.getElementById('c-target').value) || 0;
+  const paynum = document.getElementById('c-paynum').value.trim();
+  const payname = document.getElementById('c-payname').value.trim();
+  const bankname = document.getElementById('c-bankname').value.trim();
+  const deadline = document.getElementById('c-date').value;
+  const err = document.getElementById('create-err');
+  const btn = document.getElementById('create-btn');
+
+  // Second payment method fields
+  const paynum2 = document.getElementById('c-paynum2').value.trim();
+  const payname2 = document.getElementById('c-payname2').value.trim();
+  const bankname2 = document.getElementById('c-bankname2').value.trim();
+
+  if (!title) { showErr(err, 'Please enter a title'); return; }
+  if (!desc) { showErr(err, 'Please tell your story'); return; }
+  if (!target) { showErr(err, 'Please enter a target amount'); return; }
+  if (!paynum || !payname) { showErr(err, 'Please fill in payment details'); return; }
+  err.style.display = 'none';
+  btn.disabled = true;
+  btn.innerHTML = '<div class="spin-sm"></div> Uploading...';
+
+  // Upload proof images
+  const proofUrls = [];
+  for (const file of proofFiles) {
+    const ext = file.name.split('.').pop();
+    const path = `${currentUser.id}/${Date.now()}_${Math.random().toString(36).slice(2)}.${ext}`;
+    const { data: upData, error: upErr } = await db.storage.from('proofs').upload(path, file);
+    if (!upErr) {
+      const { data: { publicUrl } } = db.storage.from('proofs').getPublicUrl(path);
+      proofUrls.push(publicUrl);
+    }
+  }
+
+  // Build insert payload
+  const userData = currentUser.user_metadata || {};
+  const insertPayload = {
+    user_id: currentUser.id,
+    title, description: desc, target,
+    method: currentPayMethodC, pay_number: paynum, pay_name: payname, bank_name: bankname,
+    organizer_name: userData.full_name || 'Organizer',
+    phone: userData.phone || '',
+    deadline: deadline || null,
+    proof_urls: proofUrls,
+  };
+
+  // Add second payment method if filled
+  if (secondPayActive && paynum2 && payname2) {
+    insertPayload.method_2 = currentPayMethodC2;
+    insertPayload.pay_number_2 = paynum2;
+    insertPayload.pay_name_2 = payname2;
+    if (currentPayMethodC2 === 'bank' && bankname2) insertPayload.bank_name_2 = bankname2;
+  }
+
+  const { data: camp, error: campErr } = await db.from('campaigns').insert(insertPayload).select().single();
+  btn.disabled = false;
+  btn.innerHTML = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>Publish Campaign & Get Link';
+  if (campErr) { showErr(err, 'Error: ' + campErr.message); return; }
+
+  // Reset form
+  ['c-title','c-desc','c-target','c-paynum','c-payname','c-bankname','c-date','c-paynum2','c-payname2','c-bankname2'].forEach(id => document.getElementById(id).value = '');
+  proofFiles = [];
+  document.getElementById('proofGrid').innerHTML = '';
+  removeSecondPayment();
+
+  // Copy link and go to dashboard
+  copyCampLink(camp.id);
+  showPage('dashboard');
+  await refreshDashboard();
+  showToast('Campaign is live! Link has been copied.', 'success');
+}
+
+/* ── PUBLIC CAMPAIGN ── */
+async function loadPublicCampaign(id) {
+  currentCampaignId = id;
+  const { data: camp, error } = await db.from('campaigns').select('*').eq('id', id).single();
+  if (error || !camp) { showToast('Campaign not found', 'error'); showPage('home'); return; }
+
+  // Feature 4: Check expiry
+  const isExpired = camp.deadline && new Date(camp.deadline) < new Date();
+  if (isExpired && !camp.is_expired) {
+    // Update the is_expired flag in DB (fire and forget)
+    db.from('campaigns').update({ is_expired: true }).eq('id', id);
+  }
+
+  // Show/hide the closed banner
+  document.getElementById('camp-closed-banner').style.display = isExpired ? 'block' : 'none';
+
+  // Show/hide the donate button
+  const donateBtn = document.getElementById('pub-donate-btn');
+  if (isExpired) {
+    donateBtn.style.display = 'none';
+  } else {
+    donateBtn.style.display = 'flex';
+  }
+
+  // Show expired tag in header
+  const expTag = document.getElementById('pub-exp-tag');
+  if (isExpired) {
+    expTag.className = 'pub-tag pt-expired';
+    expTag.textContent = 'Closed';
+  } else {
+    expTag.className = 'pub-tag pt-cat';
+    expTag.textContent = 'Campaign';
+  }
+
+  document.getElementById('pub-title').textContent = camp.title;
+  document.getElementById('pub-desc').textContent = camp.description || '';
+  document.getElementById('pub-org').textContent = camp.organizer_name || 'Organizer';
+  document.getElementById('pub-phone').textContent = camp.phone || '';
+  const initials = (camp.organizer_name||'O').split(' ').map(w=>w[0]).join('').toUpperCase().slice(0,2);
+  document.getElementById('pub-av').textContent = initials;
+
+  // Load donations
+  const { data: dons } = await db.from('donations').select('*').eq('campaign_id', id).order('created_at', { ascending: false });
+  const donations = dons || [];
+  const raised = donations.filter(d=>d.status==='verified').reduce((s,d)=>s+d.amount,0);
+  const pct = camp.target ? Math.min(Math.round((raised/camp.target)*100), 100) : 0;
+  document.getElementById('pub-raised').textContent = raised.toLocaleString('en-PK');
+  document.getElementById('pub-target').textContent = (camp.target||0).toLocaleString('en-PK');
+  document.getElementById('pub-pbar').style.width = pct + '%';
+  document.getElementById('pub-pct').textContent = pct + '% funded';
+
+  // Proof images
+  const pg = document.getElementById('pub-proofs');
+  pg.innerHTML = (camp.proof_urls||[]).length
+    ? camp.proof_urls.map(url => `<img src="${url}" class="pub-proof-img" onclick="openLightbox('${url}')" loading="lazy"/>`).join('')
+    : `<div style="grid-column:1/-1;font-family:var(--fb);font-size:13px;color:var(--t3);padding:16px 0;">No proof images uploaded.</div>`;
+
+  // Feature 3: Payment — show both methods if available
+  const methodLabel = {bank:'Bank Transfer', easypaisa:'Easypaisa', jazzcash:'JazzCash'};
+  let payHtml = `
+    <div class="dc-bank-item">
+      <div class="dc-bank-method">${methodLabel[camp.method]||'Payment'}</div>
+      <div class="dc-bank-num">${camp.pay_number||''}</div>
+      <div class="dc-bank-name">${camp.pay_name||''}${camp.bank_name ? ' · ' + camp.bank_name : ''}</div>
+      <button class="dc-copy-btn" onclick="doCopy('${camp.pay_number}',this)"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg> Copy number</button>
+    </div>`;
+  if (camp.pay_number_2 && camp.pay_name_2) {
+    payHtml += `
+    <div class="dc-bank-item" style="border-color:rgba(91,141,239,.18);">
+      <div class="dc-bank-method" style="color:var(--blu);">${methodLabel[camp.method_2]||'Alternative'}</div>
+      <div class="dc-bank-num">${camp.pay_number_2}</div>
+      <div class="dc-bank-name">${camp.pay_name_2}${camp.bank_name_2 ? ' · ' + camp.bank_name_2 : ''}</div>
+      <button class="dc-copy-btn" onclick="doCopy('${camp.pay_number_2}',this)"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg> Copy number</button>
+    </div>`;
+  }
+  document.getElementById('pub-payment').innerHTML = payHtml;
+
+  // Donors
+  const colors = ['rgba(0,223,168,.1)','rgba(91,141,239,.1)','rgba(245,166,35,.1)','rgba(155,127,234,.1)'];
+  const tcolors = ['var(--ac)','var(--blu)','var(--amb)','var(--pur)'];
+  document.getElementById('pub-donor-ct').textContent = donations.length + ' donation' + (donations.length!==1?'s':'');
+  document.getElementById('pub-donors').innerHTML = donations.length
+    ? donations.map((d,i) => `
+        <div class="pub-don-item">
+          <div class="pub-don-av" style="background:${colors[i%4]};color:${tcolors[i%4]}">${d.donor_name?d.donor_name.split(' ').map(w=>w[0]).join('').toUpperCase().slice(0,2):'?'}</div>
+          <div><div class="pub-don-nm">${d.donor_name||'Anonymous Donor'}</div><div class="pub-don-time">${timeAgo(d.created_at)}</div></div>
+          <div class="pub-don-amt">PKR ${(d.amount||0).toLocaleString('en-PK')}<span class="stt ${d.status==='verified'?'stt-v':'stt-p'}">${d.status==='verified'?'✓ Verified':'⏳ Pending'}</span></div>
+        </div>`).join('')
+    : `<div style="font-family:var(--fb);font-size:13px;color:var(--t3);padding:16px 0;text-align:center;">Be the first to donate!</div>`;
+
+  showPage('campaign');
+}
+
+/* ── BROWSE CAMPAIGNS ── */
+let _browseAllCamps = [];
+
+async function loadBrowsePage() {
+  const grid = document.getElementById('browse-grid');
+  const countEl = document.getElementById('browse-count');
+  grid.innerHTML = '<div style="grid-column:1/-1;text-align:center;padding:64px;"><div class="spin-sm light" style="margin:0 auto;"></div></div>';
+  countEl.textContent = '';
+
+  // Fetch all public campaigns
+  const { data: camps } = await db.from('campaigns').select('*').order('created_at', { ascending: false });
+  const campaigns = camps || [];
+
+  if (!campaigns.length) {
+    grid.innerHTML = '<div style="grid-column:1/-1;text-align:center;padding:64px;font-family:var(--fb);font-size:14px;color:var(--t3);">No campaigns found.</div>';
+    return;
+  }
+
+  // Fetch verified donations for all campaigns
+  const campIds = campaigns.map(c => c.id);
+  const { data: dons } = await db.from('donations').select('campaign_id,amount,status').in('campaign_id', campIds).eq('status','verified');
+  const donations = dons || [];
+
+  _browseAllCamps = campaigns.map(c => {
+    const raised = donations.filter(d => d.campaign_id === c.id).reduce((s, d) => s + d.amount, 0);
+    return Object.assign({}, c, { raised });
+  });
+
+  // Reset search input
+  document.getElementById('browse-search-input').value = '';
+  renderBrowseGrid(_browseAllCamps);
+}
+
+function renderBrowseGrid(camps) {
+  const grid = document.getElementById('browse-grid');
+  const countEl = document.getElementById('browse-count');
+  countEl.textContent = camps.length + ' campaign' + (camps.length !== 1 ? 's' : '') + ' found';
+
+  if (!camps.length) {
+    grid.innerHTML = '<div style="grid-column:1/-1;text-align:center;padding:64px;font-family:var(--fb);font-size:14px;color:var(--t3);">No campaigns match your search.</div>';
+    return;
+  }
+
+  grid.innerHTML = camps.map(c => {
+    const pct = c.target ? Math.min(Math.round((c.raised / c.target) * 100), 100) : 0;
+    const isExp = c.deadline && new Date(c.deadline) < new Date();
+    const expTag = isExp ? '<span class="bc-exp-tag">Closed</span>' : '';
+    return `<div class="browse-card">
+      <div class="bc-title">${c.title}${expTag}</div>
+      <div class="bc-org">by ${c.organizer_name || 'Organizer'}</div>
+      <div class="bc-raised-row"><span class="bc-raised-pfx">PKR</span><span class="bc-raised">${c.raised.toLocaleString('en-PK')}</span></div>
+      <div class="bc-goal">of PKR ${(c.target || 0).toLocaleString('en-PK')} goal</div>
+      <div class="bc-pb-track"><div class="bc-pb-fill" style="width:${pct}%"></div></div>
+      <div class="bc-pct">${pct}% funded</div>
+      <button class="bc-view-btn" onclick="loadPublicCampaign('${c.id}')">View Campaign →</button>
+    </div>`;
+  }).join('');
+}
+
+function browseCampaignSearch(val) {
+  if (!_browseAllCamps.length) return;
+  const q = val.toLowerCase().trim();
+  const filtered = q
+    ? _browseAllCamps.filter(c =>
+        c.title.toLowerCase().includes(q) ||
+        (c.organizer_name || '').toLowerCase().includes(q)
+      )
+    : _browseAllCamps;
+  renderBrowseGrid(filtered);
+}
+
+/* ── DONATE MODAL ── */
+function openDonateModal() {
+  document.getElementById('donate-form').style.display = 'block';
+  document.getElementById('donate-success').style.display = 'none';
+  document.getElementById('donateModal').classList.add('open');
+  screenshotFile = null;
+  document.getElementById('ss-preview').style.display = 'none';
+  document.getElementById('ssUploadArea').style.display = 'block';
+}
+
+function closeDonateModal() {
+  document.getElementById('donateModal').classList.remove('open');
+  ['d-name','d-phone','d-amount'].forEach(id => document.getElementById(id).value = '');
+  screenshotFile = null;
+  document.getElementById('donate-err').style.display = 'none';
+}
+
+document.getElementById('donateModal').addEventListener('click', e => { if(e.target === document.getElementById('donateModal')) closeDonateModal(); });
+
+function handleScreenshot(e) {
+  const file = e.target.files[0];
+  if (!file) return;
+  screenshotFile = file;
+  const reader = new FileReader();
+  reader.onload = ev => {
+    const preview = document.getElementById('ss-preview');
+    preview.src = ev.target.result;
+    preview.style.display = 'block';
+    document.getElementById('ssUploadArea').style.display = 'none';
+  };
+  reader.readAsDataURL(file);
+}
+
+async function submitDonation() {
+  const name = document.getElementById('d-name').value.trim();
+  const phone = document.getElementById('d-phone').value.trim();
+  const amount = parseInt(document.getElementById('d-amount').value) || 0;
+  const err = document.getElementById('donate-err');
+  const btn = document.getElementById('donate-submit-btn');
+  if (!phone) { showErr(err, 'Please enter your phone number'); return; }
+  if (!amount) { showErr(err, 'Please enter the amount'); return; }
+  if (!screenshotFile) { showErr(err, 'Please upload a transaction screenshot'); return; }
+  err.style.display = 'none';
+  btn.disabled = true;
+  btn.innerHTML = '<div class="spin-sm"></div> Uploading...';
+
+  // Upload screenshot
+  let screenshotUrl = null;
+  const ext = screenshotFile.name.split('.').pop();
+  const path = `${currentCampaignId}/${Date.now()}.${ext}`;
+  const { data: upData, error: upErr } = await db.storage.from('screenshots').upload(path, screenshotFile);
+  if (!upErr) {
+    const { data: { publicUrl } } = db.storage.from('screenshots').getPublicUrl(path);
+    screenshotUrl = publicUrl;
+  }
+
+  // Insert donation
+  const { error: donErr } = await db.from('donations').insert({
+    campaign_id: currentCampaignId,
+    donor_name: name || 'Anonymous',
+    phone, amount,
+    status: 'pending',
+    screenshot_url: screenshotUrl,
+  });
+  btn.disabled = false;
+  btn.innerHTML = '<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>Submit for Verification';
+  if (donErr) { showErr(err, 'Error: ' + donErr.message); return; }
+  document.getElementById('donate-form').style.display = 'none';
+  document.getElementById('donate-success').style.display = 'block';
+  // Refresh public page donor list
+  await loadPublicCampaign(currentCampaignId);
+}
+
+/* ── HELPERS ── */
+function copyCampLink(id, e) {
+  if (e) e.stopPropagation();
+  const url = `${window.location.origin}${window.location.pathname}?c=${id}`;
+  navigator.clipboard.writeText(url).catch(() => {});
+  showToast('Campaign link copied! Share it with your donors.', 'success');
+}
+
+function doCopy(text, btn) {
+  navigator.clipboard.writeText(text).then(() => {
+    const orig = btn.innerHTML;
+    btn.innerHTML = '<svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg> Copied!';
+    btn.style.color = 'var(--ac)';
+    setTimeout(() => { btn.innerHTML = orig; btn.style.color = ''; }, 2000);
+  }).catch(() => {});
+}
+
+function showErr(el, msg) { el.textContent = msg; el.style.display = 'block'; }
+
+function showToast(msg, type) {
+  const t = document.getElementById('toast');
+  document.getElementById('toast-msg').textContent = msg;
+  t.className = 'show ' + (type === 'success' ? 'success' : type === 'error' ? 'error' : '');
+  setTimeout(() => t.className = '', 3500);
+}
+
+function openLightbox(src) { document.getElementById('lbImg').src = src; document.getElementById('lightbox').classList.add('open'); }
+function closeLightbox() { document.getElementById('lightbox').classList.remove('open'); }
+
+function timeAgo(ts) {
+  if (!ts) return '';
+  const diff = Date.now() - new Date(ts).getTime();
+  const m = Math.floor(diff / 60000);
+  if (m < 1) return 'Just now';
+  if (m < 60) return m + ' min ago';
+  const h = Math.floor(m / 60);
+  if (h < 24) return h + ' hr ago';
+  return Math.floor(h / 24) + ' d ago';
+}
+
+function emptyState(ttl, sub, page, btnTxt) {
+  return `<div class="empty-state"><div class="empty-ic"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="var(--t3)" stroke-width="2" stroke-linecap="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg></div><div class="empty-ttl">${ttl}</div><div class="empty-sub">${sub}</div><button class="empty-btn" onclick="showPage('${page}')">${btnTxt}</button></div>`;
+}
+</script>
+</body>
+</html>
