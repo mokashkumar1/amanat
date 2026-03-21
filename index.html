@@ -850,18 +850,17 @@ async function checkEmailVerified() {
   errEl.style.display = 'none';
   okEl.style.display = 'none';
 
-  // Try refreshSession FIRST — forces Supabase to re-check verification status from server
+  // Retry 3 times with 1.5s gap — fixes race condition after email link click
   let user = null;
-  try {
-    const { data: s2 } = await db.auth.refreshSession();
-    if (s2?.user?.email_confirmed_at) user = s2.user;
-  } catch(e) {}
-
-  // Fallback: getSession
-  if (!user) {
+  for (let attempt = 0; attempt < 3; attempt++) {
+    if (attempt > 0) await new Promise(r => setTimeout(r, 1500));
+    try {
+      const { data: s2 } = await db.auth.refreshSession();
+      if (s2?.user?.email_confirmed_at) { user = s2.user; break; }
+    } catch(e) {}
     try {
       const { data: s1 } = await db.auth.getSession();
-      if (s1?.session?.user?.email_confirmed_at) user = s1.session.user;
+      if (s1?.session?.user?.email_confirmed_at) { user = s1.session.user; break; }
     } catch(e) {}
   }
 
@@ -874,7 +873,6 @@ async function checkEmailVerified() {
     return;
   }
 
-  // ✓ Verified!
   if (_resendTimer) clearInterval(_resendTimer);
   currentUser = user;
   await loadUserProfile();
