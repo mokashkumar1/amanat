@@ -850,22 +850,18 @@ async function checkEmailVerified() {
   errEl.style.display = 'none';
   okEl.style.display = 'none';
 
-  // First try getSession (works if Supabase already set session from hash)
+  // Try refreshSession FIRST — forces Supabase to re-check verification status from server
   let user = null;
   try {
-    const { data: s1 } = await db.auth.getSession();
-    if (s1?.session?.user?.email_confirmed_at) {
-      user = s1.session.user;
-    }
+    const { data: s2 } = await db.auth.refreshSession();
+    if (s2?.user?.email_confirmed_at) user = s2.user;
   } catch(e) {}
 
-  // Fallback: refreshSession
+  // Fallback: getSession
   if (!user) {
     try {
-      const { data: s2 } = await db.auth.refreshSession();
-      if (s2?.user?.email_confirmed_at) {
-        user = s2.user;
-      }
+      const { data: s1 } = await db.auth.getSession();
+      if (s1?.session?.user?.email_confirmed_at) user = s1.session.user;
     } catch(e) {}
   }
 
@@ -873,7 +869,7 @@ async function checkEmailVerified() {
   btn.innerHTML = '<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg> I\'ve Verified My Email';
 
   if (!user) {
-    errEl.textContent = 'Email not verified yet. Please click the link we sent you, then try again.';
+    errEl.textContent = 'Not verified yet — please open the email we sent, click the confirmation link, then come back and press this button.';
     errEl.style.display = 'block';
     return;
   }
