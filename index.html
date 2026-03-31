@@ -347,8 +347,7 @@ body{font-family:var(--fb);background:var(--bg);color:var(--t1);-webkit-font-smo
 #resend-countdown{font-variant-numeric:tabular-nums;}
 
 /* ════════════════ BROWSE PAGE ════════════════ */
-.browse-outer{padding-top:62px;}
-.browse-wrap{padding:28px 48px 64px;max-width:1200px;margin:0 auto;}
+.browse-wrap{padding:90px 48px 64px;max-width:1200px;margin:0 auto;}
 .browse-hd{margin-bottom:32px;}
 .browse-ttl{font-family:var(--fd);font-size:36px;font-weight:800;letter-spacing:-1.2px;color:var(--t1);margin-bottom:8px;}
 .browse-sub{font-family:var(--fb);font-size:15px;color:var(--t2);margin-bottom:28px;line-height:1.65;}
@@ -391,151 +390,6 @@ body{font-family:var(--fb);background:var(--bg);color:var(--t1);-webkit-font-smo
 .empty-btn:hover{background:#00F8BC;}
 .spin-sm{width:16px;height:16px;border:2px solid rgba(8,12,20,.3);border-top-color:#080C14;border-radius:50%;animation:spin .6s linear infinite;}
 .spin-sm.light{border-color:var(--b2);border-top-color:var(--ac);}
-
-/* ── HAMBURGER & MOBILE NAV ── */
-.hamburger{display:none;background:none;border:none;color:var(--t1);cursor:pointer;padding:6px;border-radius:6px;transition:background .15s;}
-.hamburger:hover{background:var(--sf);}
-.mobile-nav-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:99;}
-.sb-toggle{display:none;background:none;border:none;color:var(--t1);cursor:pointer;padding:6px;border-radius:6px;margin-right:12px;flex-shrink:0;transition:background .15s;}
-.sb-toggle:hover{background:var(--sf);}
-.dash-sb-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:59;}
-
-/* ── HOMEPAGE FOOTER ── */
-.site-footer{padding:32px 48px;border-top:1px solid var(--b1);display:flex;align-items:center;justify-content:space-between;background:var(--bg);}
-.sf-brand{display:flex;align-items:center;gap:8px;}
-.sf-brand-nm{font-family:var(--fd);font-size:14px;font-weight:700;color:var(--t2);}
-.sf-copy{font-family:var(--fb);font-size:12px;color:var(--t3);}
-
-/* ════════════════ RESPONSIVE — 768px ════════════════ */
-@media(max-width:768px){
-  /* ── NAV ── */
-  .nav{padding:0 16px;height:56px;}
-  .hamburger{display:flex;align-items:center;justify-content:center;}
-  .nav-r{position:fixed;top:56px;left:0;right:0;background:var(--bg2);border-bottom:1px solid var(--b2);flex-direction:column;padding:12px 16px;gap:8px;display:none;z-index:100;box-shadow:0 12px 32px rgba(0,0,0,.4);}
-  .nav-r.open{display:flex;}
-  .nav-r .btn-o,.nav-r .btn-f,.nav-r .btn-red{width:100%;text-align:center;padding:12px 16px;font-size:14px;}
-  .nav-r span{width:100%;text-align:center;display:block;padding:8px 0;}
-  .mobile-nav-overlay.open{display:block;}
-
-  /* ── HERO ── */
-  .hero{padding:100px 20px 48px;min-height:auto;}
-  .hero-h1{font-size:36px;letter-spacing:-1.2px;margin-bottom:18px;}
-  .hero-sub{font-size:15px;margin-bottom:28px;}
-  .hero-ctas{flex-direction:column;}
-  .cta-main,.cta-sec{width:100%;justify-content:center;padding:14px 20px;}
-  .hero-glow{width:300px;height:300px;top:-40px;left:-60px;}
-
-  /* ── TICKER ── */
-  .ticker-bar{height:30px;}
-  .tick{font-size:10px;padding:0 20px;}
-
-  /* ── HOW IT WORKS ── */
-  .hiw{padding:48px 20px;}
-  .sec-ttl{font-size:26px;margin-bottom:32px;}
-  .hiw-steps{grid-template-columns:1fr;gap:24px;}
-  .hiw-steps::before{display:none;}
-  .step{text-align:left;padding:0;display:grid;grid-template-columns:44px 1fr;grid-template-rows:auto auto;gap:0 14px;}
-  .step-circle{margin:0;grid-row:1/3;}
-  .step-title{font-size:14px;align-self:end;}
-  .step-desc{font-size:12.5px;margin-top:4px;}
-
-  /* ── TRUST STRIP ── */
-  .trust-strip{grid-template-columns:1fr 1fr;padding:24px 20px;gap:20px;}
-  .ts-item{padding:12px 0;border-right:none;border-bottom:1px solid var(--b1);}
-  .ts-item:nth-child(3),.ts-item:nth-child(4){border-bottom:none;}
-  .ts-num{font-size:28px;}
-  .ts-lbl{font-size:11px;}
-
-  /* ── FOOTER ── */
-  .site-footer{padding:24px 20px;flex-direction:column;gap:8px;text-align:center;}
-
-  /* ── AUTH ── */
-  .auth-wrap{padding:70px 16px 32px;}
-  .auth-box{padding:28px 20px;border-radius:16px;}
-  .auth-ttl{font-size:22px;}
-  .form-row{grid-template-columns:1fr;}
-
-  /* ── VERIFY EMAIL ── */
-  .verify-wrap{padding:70px 16px 32px;}
-  .verify-box{padding:32px 20px;border-radius:18px;}
-  .verify-ttl{font-size:22px;}
-
-  /* ── DASHBOARD ── */
-  .dash-sb{position:fixed;left:-260px;top:0;z-index:60;width:250px;transition:left .28s ease;box-shadow:none;}
-  .dash-sb.open{left:0;box-shadow:8px 0 32px rgba(0,0,0,.4);}
-  .dash-sb-overlay.open{display:block;z-index:59;}
-  .sb-toggle{display:flex;align-items:center;justify-content:center;}
-  .dash-topbar{padding:0 16px;gap:8px;}
-  .dash-content{padding:16px;}
-  .kpi-row{grid-template-columns:1fr;gap:10px;}
-  .kpi-num{font-size:24px;}
-  .two-col{grid-template-columns:1fr;}
-  .dc{padding:16px;}
-  .cc-title{max-width:160px;font-size:13px;}
-  .camp-card{padding:14px;}
-  .dvc{padding:14px;}
-
-  /* ── CREATE ── */
-  .create-wrap{padding:76px 16px 40px;}
-  .create-ttl{font-size:26px;}
-  .create-section{padding:20px 16px;border-radius:13px;}
-  .form-row{grid-template-columns:1fr;}
-  .preview-grid{grid-template-columns:repeat(2,1fr);}
-  .payment-tabs{flex-wrap:wrap;}
-
-  /* ── PUBLIC CAMPAIGN ── */
-  .pub-page{padding-top:56px;}
-  .pub-hero{padding:28px 16px 0;}
-  .pub-top{grid-template-columns:1fr;gap:24px;}
-  .pub-title{font-size:24px;}
-  .pub-description{font-size:14px;}
-  .pub-proof-grid{grid-template-columns:1fr 1fr;gap:8px;}
-  .pub-sidebar{position:static;}
-  .donate-card{border-radius:14px;}
-  .pub-donors-section{padding:24px 16px 40px;}
-  .pub-don-item{flex-wrap:wrap;gap:8px;}
-  .pub-don-amt{margin-left:46px;font-size:13px;}
-
-  /* ── BROWSE ── */
-  .browse-outer{padding-top:56px;}
-  .browse-wrap{padding:28px 16px 40px;}
-  .browse-ttl{font-size:26px;}
-  .browse-grid{grid-template-columns:1fr;gap:12px;}
-  .browse-card{padding:18px;}
-
-  /* ── MODALS ── */
-  .modal-bg{padding:12px;}
-  .modal-box{padding:24px 18px;border-radius:16px;max-width:100%;}
-  .modal-ttl{font-size:19px;}
-
-  /* ── TOAST ── */
-  #toast{left:16px;right:16px;transform:none;white-space:normal;max-width:100%;}
-
-  /* ── MISC ── */
-  .eyebrow{padding:4px 11px;margin-bottom:20px;}
-  .e-txt{font-size:10px;letter-spacing:1px;}
-  .milestone-banner{padding:12px 14px;flex-wrap:wrap;}
-  .camp-closed-banner{padding:12px 14px;}
-}
-
-/* ════════════════ RESPONSIVE — 480px (small phones) ════════════════ */
-@media(max-width:480px){
-  .hero-h1{font-size:30px;letter-spacing:-1px;}
-  .hero-sub{font-size:14px;}
-  .sec-ttl{font-size:22px;}
-  .trust-strip{grid-template-columns:1fr;gap:0;}
-  .ts-item{border-right:none;border-bottom:1px solid var(--b1);padding:14px 0;}
-  .ts-item:last-child{border-bottom:none;}
-  .kpi{padding:16px;}
-  .kpi-num{font-size:22px;}
-  .pub-title{font-size:21px;}
-  .pub-proof-grid{grid-template-columns:1fr;}
-  .create-ttl{font-size:22px;}
-  .browse-ttl{font-size:22px;}
-  .auth-ttl{font-size:20px;}
-  .verify-ttl{font-size:20px;}
-  .dc-raised-num{font-size:24px;}
-}
 </style>
 </head>
 <body>
@@ -552,13 +406,11 @@ body{font-family:var(--fb);background:var(--bg);color:var(--t1);-webkit-font-smo
     <div class="logo-mk"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#080C14" stroke-width="2.5" stroke-linecap="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg></div>
     <span class="logo-nm">Amanat</span>
   </div>
-  <button class="hamburger" id="hamburgerBtn" onclick="toggleMobileNav()"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg></button>
   <div class="nav-r" id="navRight">
     <button class="btn-o" onclick="showPage('browse')">Browse Campaigns</button>
     <button class="btn-o" onclick="showPage('login')">Log In</button>
     <button class="btn-f" onclick="showPage('signup')">Start a Campaign →</button>
   </div>
-  <div class="mobile-nav-overlay" id="mobileNavOverlay" onclick="closeMobileNav()"></div>
 </nav>
 
 <!-- ═══ HOMEPAGE ═══ -->
@@ -602,10 +454,6 @@ body{font-family:var(--fb);background:var(--bg);color:var(--t1);-webkit-font-smo
     <div class="ts-item"><div class="ts-num">Direct</div><div class="ts-lbl">Bank transfers</div></div>
     <div class="ts-item"><div class="ts-num">Proof</div><div class="ts-lbl">Screenshot required</div></div>
   </div>
-  <footer class="site-footer">
-    <div class="sf-brand"><div class="logo-mk" style="width:24px;height:24px;border-radius:6px;"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#080C14" stroke-width="2.5" stroke-linecap="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg></div><span class="sf-brand-nm">Amanat</span></div>
-    <div class="sf-copy">Every Rupee Accountable · Made in Pakistan</div>
-  </footer>
 </div>
 
 <!-- ═══ LOGIN ═══ -->
@@ -647,8 +495,7 @@ body{font-family:var(--fb);background:var(--bg);color:var(--t1);-webkit-font-smo
 <!-- ═══ DASHBOARD ═══ -->
 <div class="page" id="page-dashboard">
   <div class="dash-shell">
-    <div class="dash-sb-overlay" id="dashSbOverlay" onclick="closeDashSidebar()"></div>
-    <aside class="dash-sb" id="dashSb">
+    <aside class="dash-sb">
       <div class="dsb-logo"><div class="logo-mk"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#080C14" stroke-width="2.5" stroke-linecap="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg></div><span class="dsb-nm">Amanat</span></div>
       <div class="dsb-section">
         <div class="dsb-lbl">Menu</div>
@@ -661,7 +508,7 @@ body{font-family:var(--fb);background:var(--bg);color:var(--t1);-webkit-font-smo
       </div>
     </aside>
     <div class="dash-main">
-      <div class="dash-topbar"><button class="sb-toggle" id="sbToggle" onclick="toggleDashSidebar()"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg></button><div><div class="dt-ttl" id="dashTabTtl">Overview</div><div class="dt-sub" id="dashTabSub">Manage your campaigns and donations</div></div><div><button class="btn-f" onclick="showPage('create')">+ New Campaign</button></div></div>
+      <div class="dash-topbar"><div><div class="dt-ttl" id="dashTabTtl">Overview</div><div class="dt-sub" id="dashTabSub">Manage your campaigns and donations</div></div><div><button class="btn-f" onclick="showPage('create')">+ New Campaign</button></div></div>
       <div class="dash-content">
         <!-- Milestone notification banners -->
         <div id="milestone-banners"></div>
@@ -847,7 +694,7 @@ body{font-family:var(--fb);background:var(--bg);color:var(--t1);-webkit-font-smo
 
 <!-- ═══ BROWSE CAMPAIGNS ═══ -->
 <div class="page" id="page-browse">
-  <div class="browse-outer">
+  <div style="padding-top:62px;">
     <div class="browse-wrap">
       <div class="browse-hd au">
         <div class="browse-ttl">Browse Campaigns</div>
@@ -1003,17 +850,22 @@ async function checkEmailVerified() {
   errEl.style.display = 'none';
   okEl.style.display = 'none';
 
-  // Retry 3 times with 1.5s gap — fixes race condition after email link click
+  // First try getSession (works if Supabase already set session from hash)
   let user = null;
-  for (let attempt = 0; attempt < 3; attempt++) {
-    if (attempt > 0) await new Promise(r => setTimeout(r, 1500));
+  try {
+    const { data: s1 } = await db.auth.getSession();
+    if (s1?.session?.user?.email_confirmed_at) {
+      user = s1.session.user;
+    }
+  } catch(e) {}
+
+  // Fallback: refreshSession
+  if (!user) {
     try {
       const { data: s2 } = await db.auth.refreshSession();
-      if (s2?.user?.email_confirmed_at) { user = s2.user; break; }
-    } catch(e) {}
-    try {
-      const { data: s1 } = await db.auth.getSession();
-      if (s1?.session?.user?.email_confirmed_at) { user = s1.session.user; break; }
+      if (s2?.user?.email_confirmed_at) {
+        user = s2.user;
+      }
     } catch(e) {}
   }
 
@@ -1021,11 +873,12 @@ async function checkEmailVerified() {
   btn.innerHTML = '<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg> I\'ve Verified My Email';
 
   if (!user) {
-    errEl.textContent = 'Not verified yet — please open the email we sent, click the confirmation link, then come back and press this button.';
+    errEl.textContent = 'Email not verified yet. Please click the link we sent you, then try again.';
     errEl.style.display = 'block';
     return;
   }
 
+  // ✓ Verified!
   if (_resendTimer) clearInterval(_resendTimer);
   currentUser = user;
   await loadUserProfile();
@@ -1184,44 +1037,21 @@ async function doSignup() {
   });
   btn.disabled = false;
   btn.innerHTML = 'Create Account →';
-
-  // Already exists — Supabase returns success but identities array is empty
-  if (!error && data?.user?.identities?.length === 0) {
-    err.innerHTML = 'An account with this email already exists. <span style="color:var(--ac);cursor:pointer;font-weight:600;text-decoration:underline;" onclick="showPage(\'login\')">Log in instead →</span>';
-    err.style.display = 'block';
-    return;
-  }
-
   if (error) {
     const msg = (error.message || '').toLowerCase();
-    // Already exists via error message
-    if (msg.includes('already registered') || msg.includes('already exists') || msg.includes('email address is already') || msg.includes('user already registered') || msg.includes('already been registered')) {
+    // Already exists
+    if (msg.includes('already registered') || msg.includes('already exists') || msg.includes('email address is already')) {
       err.innerHTML = 'An account with this email already exists. <span style="color:var(--ac);cursor:pointer;font-weight:600;text-decoration:underline;" onclick="showPage(\'login\')">Log in instead →</span>';
       err.style.display = 'block';
       return;
     }
     // Email rate limit — account may still have been created, email just not sent
-    if (msg.includes('rate limit') || msg.includes('over_email_send_rate_limit') || msg.includes('too many')) {
+    if (msg.includes('rate limit') || msg.includes('over_email_send_rate_limit') || msg.includes('too many') || msg.includes('email sending')) {
       err.style.display = 'none';
       _pendingSignupEmail = email;
       _pendingSignupName = name;
       if (data && data.user) currentUser = data.user;
       showVerifyEmailPage(email, true);
-      return;
-    }
-    // SMTP / custom email provider failure — account created but email could not be sent
-    if (msg.includes('sending confirmation email') || msg.includes('error sending') || msg.includes('email sending')) {
-      err.style.display = 'none';
-      _pendingSignupEmail = email;
-      _pendingSignupName = name;
-      if (data && data.user) currentUser = data.user;
-      showVerifyEmailPage(email, true);
-      // Show friendly message on the verify page
-      const okEl = document.getElementById('verify-ok');
-      if (okEl) {
-        okEl.textContent = "Account created! However we couldn't send the verification email right now. Please try 'Resend Email' in a few minutes.";
-        okEl.style.display = 'block';
-      }
       return;
     }
     showErr(err, error.message);
@@ -1315,7 +1145,6 @@ function dashTab(el, tab) {
   document.querySelectorAll('.dni').forEach(n => n.classList.remove('on'));
   if (el) el.classList.add('on');
   ['overview','campaigns','verify'].forEach(t => document.getElementById('tab-' + t).style.display = t === tab ? 'block' : 'none');
-  if (window.innerWidth <= 768) closeDashSidebar();
   const titles = { overview: 'Overview', campaigns: 'My Campaigns', verify: 'Verify Donations' };
   document.getElementById('dashTabTtl').textContent = titles[tab];
   document.getElementById('dashTabSub').textContent = 'Manage your campaigns and donations';
@@ -1845,56 +1674,6 @@ function timeAgo(ts) {
 function emptyState(ttl, sub, page, btnTxt) {
   return `<div class="empty-state"><div class="empty-ic"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="var(--t3)" stroke-width="2" stroke-linecap="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg></div><div class="empty-ttl">${ttl}</div><div class="empty-sub">${sub}</div><button class="empty-btn" onclick="showPage('${page}')">${btnTxt}</button></div>`;
 }
-
-/* ── MOBILE NAV TOGGLE ── */
-function toggleMobileNav() {
-  const nr = document.getElementById('navRight');
-  const ov = document.getElementById('mobileNavOverlay');
-  const isOpen = nr.classList.contains('open');
-  if (isOpen) {
-    closeMobileNav();
-  } else {
-    nr.classList.add('open');
-    ov.classList.add('open');
-  }
-}
-function closeMobileNav() {
-  document.getElementById('navRight').classList.remove('open');
-  document.getElementById('mobileNavOverlay').classList.remove('open');
-}
-
-/* ── DASHBOARD SIDEBAR TOGGLE (MOBILE) ── */
-function toggleDashSidebar() {
-  const sb = document.getElementById('dashSb');
-  const ov = document.getElementById('dashSbOverlay');
-  const isOpen = sb.classList.contains('open');
-  if (isOpen) {
-    closeDashSidebar();
-  } else {
-    sb.classList.add('open');
-    ov.classList.add('open');
-  }
-}
-function closeDashSidebar() {
-  document.getElementById('dashSb').classList.remove('open');
-  document.getElementById('dashSbOverlay').classList.remove('open');
-}
-
-/* Close mobile nav when a page navigation happens */
-const _origShowPage = showPage;
-showPage = function(p) {
-  closeMobileNav();
-  closeDashSidebar();
-  _origShowPage(p);
-};
-
-/* Close mobile nav on window resize to desktop */
-window.addEventListener('resize', () => {
-  if (window.innerWidth > 768) {
-    closeMobileNav();
-    closeDashSidebar();
-  }
-});
 </script>
 </body>
 </html>
